@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "display": "React Native",
+  "extends": "./base.json",
+  "compilerOptions": {
+    "experimentalDecorators": true,
+    "module": "commonjs",
+    "jsx": "react-native",
+    "lib": ["es6", "esnext.asynciterable", "es2017"],
+    "strict": true,
+    "suppressImplicitAnyIndexErrors": true
+  }
+}
