@@ -18,7 +18,7 @@
     "check:types": "tsc --pretty --noEmit",
     "check:all": "yarn check:format && yarn lint && yarn check:types && yarn test && yarn build",
     "gen-env": "gen-env-types .env -o src/env.d.ts -e .",
-    "typeorm:cli": "../../node_modules/typeorm cli -f ./src/lib/config/typeorm.config.ts",
+    "typeorm:cli": "../../node_modules/typeorm cli -f ./src/lib/config/orm.config.ts",
     "table:create": "yarn run typeorm:cli -- migration:run",
     "table:drop": "yarn run typeorm:cli -- migration:revert"
   },
