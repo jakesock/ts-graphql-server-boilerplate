@@ -2,6 +2,7 @@
 /* eslint-disable no-console */
 
 import { PROD, SERVER_PORT } from "./lib/constants";
+import { initializeDatabase } from "./lib/utils";
 import { createApolloExpressServer } from "./server";
 
 /**
@@ -12,7 +13,8 @@ import { createApolloExpressServer } from "./server";
 export async function bootstrap(): Promise<void> {
   const { apolloServer, app } = await createApolloExpressServer();
 
-  // TODO: INITIALIZE DATABASE CONNECTION
+  // Initialize database connection
+  await initializeDatabase();
 
   // Start Apollo Server. Without this, Apollo will throw an error.
   await apolloServer.start();
