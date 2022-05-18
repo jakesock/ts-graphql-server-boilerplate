@@ -23,6 +23,7 @@
     "table:drop": "yarn run typeorm:cli -- migration:revert"
   },
   "dependencies": {
+    "@monorepo/yup-schemas": "workspace:*",
     "apollo-server-core": "^3.7.0",
     "apollo-server-express": "^3.7.0",
     "class-validator": "^0.13.2",
@@ -84,9 +85,6 @@
       "jsx",
       "json",
       "node"
-    ],
-    "setupFilesAfterEnv": [
-      "<rootDir>/src/test/setup.ts"
     ]
   }
 }

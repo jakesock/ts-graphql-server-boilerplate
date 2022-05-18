@@ -976,6 +976,7 @@ __metadata:
   dependencies:
     "@monorepo/config": "workspace:*"
     "@monorepo/tsconfig": "workspace:*"
+    "@monorepo/yup-schemas": "workspace:*"
     "@types/connect-redis": ^0.0.18
     "@types/express-session": ^1.17.4
     "@types/ioredis": ^4.28.10
@@ -1022,7 +1023,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@monorepo/yup-schemas@workspace:packages/yup-schemas":
+"@monorepo/yup-schemas@workspace:*, @monorepo/yup-schemas@workspace:packages/yup-schemas":
   version: 0.0.0-use.local
   resolution: "@monorepo/yup-schemas@workspace:packages/yup-schemas"
   dependencies:

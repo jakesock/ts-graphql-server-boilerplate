@@ -3,6 +3,37 @@
 # !!!   DO NOT MODIFY THIS FILE BY YOURSELF   !!!
 # -----------------------------------------------
 
+type AuthFormResponse {
+  errors: [FieldError!]
+  user: User
+}
+
+type FieldError {
+  field: String!
+  message: String!
+}
+
+type Mutation {
+  registerUser(registerUserInput: RegisterUserInput!): AuthFormResponse!
+}
+
 type Query {
-  hello: String!
+  getCurrentUser: User
+}
+
+input RegisterUserInput {
+  confirmEmail: String!
+  confirmPassword: String!
+  email: String!
+  password: String!
+  username: String!
+}
+
+type User {
+  createdAt: String!
+  email: String!
+  id: String!
+  isConfirmed: Boolean!
+  updatedAt: String!
+  username: String!
 }
