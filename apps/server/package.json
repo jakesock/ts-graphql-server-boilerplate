@@ -84,6 +84,9 @@
       "jsx",
       "json",
       "node"
+    ],
+    "setupFilesAfterEnv": [
+      "<rootDir>/src/test/setup.ts"
     ]
   }
 }
