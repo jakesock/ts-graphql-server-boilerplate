@@ -15,8 +15,8 @@ export const ormConfig: DataSourceOptions = {
   synchronize: !PROD,
   logging: !PROD,
   entities: [path.join(__dirname, "../../**/*.entity{.ts,.js}")],
-  subscribers: [path.join(__dirname, "../../subscribers/**/*.{ts,js}")],
-  migrations: [path.join(__dirname, "../../migrations/**/*.{ts,js}")],
+  subscribers: [path.join(__dirname, "../../subscriber/**/*.{ts,js}")],
+  migrations: [path.join(__dirname, "../../migration/**/*.{ts,js}")],
 };
 
 export const AppDataSource = new DataSource(ormConfig);
