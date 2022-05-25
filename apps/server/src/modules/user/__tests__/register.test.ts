@@ -32,23 +32,21 @@ const registerMutation = `
   }
 `;
 
-describe("AUTH: Register Mutation", () => {
+describe("USER: Register User Mutation", () => {
   it("creates user with valid input", async () => {
-    const user = {
-      username: "testboy",
-      email: "testboy@test.com",
-      password: "Test123",
-    };
+    const username = "RegisterUser";
+    const email = "RegisterUser@test.com";
+    const password = "RegisterUser123";
 
     const response = await gqlCall({
       source: registerMutation,
       variableValues: {
         registerUserInput: {
-          username: user.username,
-          email: user.email,
-          confirmEmail: user.email,
-          password: user.password,
-          confirmPassword: user.password,
+          username,
+          email,
+          confirmEmail: email,
+          password,
+          confirmPassword: password,
         },
       },
     });
@@ -57,8 +55,8 @@ describe("AUTH: Register Mutation", () => {
       data: {
         registerUser: {
           user: {
-            username: "testboy",
-            email: "testboy@test.com",
+            username,
+            email,
             isConfirmed: false,
           },
           errors: null,
@@ -66,10 +64,10 @@ describe("AUTH: Register Mutation", () => {
       },
     });
 
-    const databaseUser = await User.findOne({ where: { email: user.email } });
+    const databaseUser = await User.findOne({ where: { email } });
     expect(databaseUser).toBeDefined();
     expect(databaseUser!.isConfirmed).toBeFalsy();
-    expect(databaseUser!.username).toBe(user.username);
-    expect(databaseUser!.email).toBe(user.email);
+    expect(databaseUser!.username).toBe(username);
+    expect(databaseUser!.email).toBe(email);
   });
 });

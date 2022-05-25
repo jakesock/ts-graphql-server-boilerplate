@@ -8,9 +8,9 @@
     "build": "rimraf ./dist && tsc",
     "build:watch": "rimraf ./dist && tsc -w",
     "start": "NODE_ENV=production node dist/src/index.js",
-    "dev": "NODE_ENV=development nodemon dist/src/index.js",
+    "dev": "NODE_ENV=development nodemon --delay 500ms dist/src/index.js",
     "db:setup-test": "ts-node ./src/test/setup.ts",
-    "test": "NODE_ENV=test yarn run db:setup-test && jest --detectOpenHandles",
+    "test": "NODE_ENV=test yarn run db:setup-test && jest --detectOpenHandles --runInBand",
     "test:watch": "NODE_ENV=test yarn run db:setup-test && jest --watch",
     "lint": "eslint . --fix",
     "format": "prettier --write .",
@@ -85,6 +85,7 @@
       "jsx",
       "json",
       "node"
-    ]
+    ],
+    "testTimeout": 20000
   }
 }

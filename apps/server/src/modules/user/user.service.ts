@@ -1,9 +1,16 @@
+import { loginUserSchema } from "@monorepo/yup-schemas";
 import { SendMailOptions } from "nodemailer";
 import { Service } from "typedi";
 import { User } from "../../entity";
-import { createConfirmationCode, PasswordManager, sendEmail } from "../../lib/utils";
+import {
+  createConfirmationCode,
+  PasswordManager,
+  sendEmail,
+  validateFormInput,
+} from "../../lib/utils";
 import { AuthFormResponse, MyContext } from "../../types";
-import { RegisterUserInput } from "./inputs";
+import { invalidLoginInputErrorMessage } from "./error-messages";
+import { LoginUserInput, RegisterUserInput } from "./inputs";
 import { validateRegister } from "./utils/validate-register";
 
 @Service()
@@ -13,8 +20,10 @@ import { validateRegister } from "./utils/validate-register";
  */
 export class UserService {
   /**
-   * Get current user service.
-   * Retrieves the currently logged in user.
+   * Get current user.
+   *
+   * Retrieves the currently logged in user. If no userId found in session,
+   * returns null.
    * @param {MyContext} ctx - Our GraphQL context.
    * @return {Promise<User | null>} Promise that resolves to a user or null.
    */
@@ -26,13 +35,13 @@ export class UserService {
   };
 
   /**
-   * Registers a new user.
+   * Register a new user.
    *
    * Validates input, hashes password, creates a new
    * user entity, and sends a confirmation email to user.
    * @param {RegisterUserInput} registerUserInput - Object of type RegisterUserInput.
    * @param {MyContext} ctx - Our GraphQL context.
-   * @return {Promise<UserResponse>} Promise that resolves to a UserResponse.
+   * @return {Promise<AuthFormResponse>} Promise that resolves to an AuthFormResponse.
    */
   register = async (
     registerUserInput: RegisterUserInput,
@@ -71,5 +80,61 @@ export class UserService {
 
     // Return user data
     return { user: newUser };
+  };
+
+  /**
+   * Login a user.
+   *
+   * Validates input and adds userId to session cookie.
+   * @param {LoginUserInput} loginUserInput - Object of type LoginUserInput.
+   * @param {MyContext} ctx - Our GraphQL context.
+   * @return {Promise<UserResponse>} Promise that resolves to a UserResponse.
+   */
+  login = async (
+    { usernameOrEmail, password }: LoginUserInput,
+    { req }: MyContext
+  ): Promise<AuthFormResponse> => {
+    // Validate input, return errors (if any)
+    const errors = await validateFormInput({ usernameOrEmail, password }, loginUserSchema);
+    if (errors.length > 0) {
+      return { errors };
+    }
+
+    const invalidInputErrorResponse: AuthFormResponse = {
+      errors: [
+        {
+          message: invalidLoginInputErrorMessage,
+          field: "usernameOrEmail",
+        },
+        {
+          message: invalidLoginInputErrorMessage,
+          field: "password",
+        },
+      ],
+    };
+
+    // Check if input is username or email, find user
+    const user = await (usernameOrEmail.includes("@")
+      ? User.findOne({
+          where: { email: usernameOrEmail },
+        })
+      : User.findOne({
+          where: { username: usernameOrEmail },
+        }));
+
+    if (!user) {
+      return invalidInputErrorResponse;
+    }
+
+    // Verify password input in relation to found user
+    const passwordManager = new PasswordManager();
+    const valid = await passwordManager.compare(user.password, password);
+    if (!valid) {
+      return invalidInputErrorResponse;
+    }
+
+    // Add userId to session
+    req.session.userId = user.id;
+    return { user };
   };
 }

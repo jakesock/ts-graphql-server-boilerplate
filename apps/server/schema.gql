@@ -13,7 +13,13 @@ type FieldError {
   message: String!
 }
 
+input LoginUserInput {
+  password: String!
+  usernameOrEmail: String!
+}
+
 type Mutation {
+  loginUser(loginUserInput: LoginUserInput!): AuthFormResponse!
   registerUser(registerUserInput: RegisterUserInput!): AuthFormResponse!
 }
 

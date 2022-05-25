@@ -2,7 +2,7 @@ import { Arg, Ctx, Mutation, Query, Resolver } from "type-graphql";
 import { Service } from "typedi";
 import { User } from "../../entity";
 import { AuthFormResponse, MyContext } from "../../types";
-import { RegisterUserInput } from "./inputs";
+import { LoginUserInput, RegisterUserInput } from "./inputs";
 import { UserService } from "./user.service";
 
 @Service()
@@ -13,7 +13,7 @@ import { UserService } from "./user.service";
 export class UserResolver {
   /**
    * Init user service.
-   * @param {UserService} userService - Service that provides methods which perform business logic for the user resolver.
+   * @param {UserService} userService - Service that provides methods which performs business logic for the user resolver.
    */
   constructor(private readonly userService: UserService) {}
 
@@ -31,7 +31,7 @@ export class UserResolver {
    * Register User Mutation.
    * @param {RegisterUserInput} registerUserInput - Object of type RegisterUserInput.
    * @param {MyContext} ctx - Our GraphQL context.
-   * @return {Promise<UserResponse>} Promise that resolves to a UserResponse.
+   * @return {Promise<AuthFormResponse>} Promise that resolves to an AuthFormResponse.
    */
   @Mutation(() => AuthFormResponse)
   async registerUser(
@@ -39,5 +39,19 @@ export class UserResolver {
     @Ctx() ctx: MyContext
   ): Promise<AuthFormResponse> {
     return this.userService.register(registerUserInput, ctx);
+  }
+
+  /**
+   * Login User Mutation.
+   * @param {LoginUserInput} loginUserInput - Object of type LoginUserInput.
+   * @param {MyContext} ctx - Our GraphQL context.
+   * @return {Promise<AuthFormResponse>} Promise that resolves to an AuthFormResponse .
+   */
+  @Mutation(() => AuthFormResponse)
+  async loginUser(
+    @Arg("loginUserInput") loginUserInput: LoginUserInput,
+    @Ctx() ctx: MyContext
+  ): Promise<AuthFormResponse> {
+    return this.userService.login(loginUserInput, ctx);
   }
 }
