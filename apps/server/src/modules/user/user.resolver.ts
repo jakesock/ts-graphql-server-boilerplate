@@ -54,4 +54,14 @@ export class UserResolver {
   ): Promise<AuthFormResponse> {
     return this.userService.login(loginUserInput, ctx);
   }
+
+  /**
+   * Logout User Mutation.
+   * @param {MyContext} ctx - Our GraphQL context.
+   * @return {Promise<boolean>} Promise that resolves to true if cookie successfully destroyed.
+   */
+  @Mutation(() => Boolean)
+  async logoutUser(@Ctx() ctx: MyContext): Promise<boolean> {
+    return this.userService.logout(ctx);
+  }
 }

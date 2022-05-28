@@ -1,3 +1,6 @@
+// eslint-disable-next-line eslint-comments/disable-enable-pair
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+
 import { ExecutionResult, graphql, GraphQLSchema } from "graphql";
 import Redis from "ioredis";
 import { Maybe } from "type-graphql";
@@ -35,6 +38,8 @@ export async function gqlCall({ source, variableValues, userId }: IGQLCallOption
       req: {
         session: {
           userId,
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+          destroy: jest.fn().mockImplementation((fn) => fn(false)),
         },
       },
       res: {

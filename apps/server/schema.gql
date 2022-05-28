@@ -20,6 +20,7 @@ input LoginUserInput {
 
 type Mutation {
   loginUser(loginUserInput: LoginUserInput!): AuthFormResponse!
+  logoutUser: Boolean!
   registerUser(registerUserInput: RegisterUserInput!): AuthFormResponse!
 }
 

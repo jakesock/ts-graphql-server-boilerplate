@@ -2,6 +2,7 @@ import { loginUserSchema } from "@monorepo/yup-schemas";
 import { SendMailOptions } from "nodemailer";
 import { Service } from "typedi";
 import { User } from "../../entity";
+import { COOKIE_NAME } from "../../lib/constants";
 import {
   createConfirmationCode,
   PasswordManager,
@@ -137,4 +138,23 @@ export class UserService {
     req.session.userId = user.id;
     return { user };
   };
+
+  /**
+   * Logout current user.
+   *
+   * Clears userId from session cookie.
+   * @param {MyContext} ctx - Our GraphQL context.
+   * @return {Promise<boolean>} Promise that resolves to true if cookie successfully destroyed.
+   */
+  logout = async ({ req, res }: MyContext): Promise<boolean> =>
+    new Promise((resolve, reject) => {
+      req.session.destroy((error) => {
+        if (error) {
+          reject(error);
+        } else {
+          res.clearCookie(COOKIE_NAME); // Clear cookie if session destroyed successfully
+          resolve(true);
+        }
+      });
+    });
 }
