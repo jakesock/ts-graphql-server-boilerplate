@@ -1,0 +1,46 @@
+# @monorepo/server
+
+## TODO:
+
+- [x] registerUser
+  - [x] Service
+  - [x] Resolver
+  - [ ] Tests: Test errors
+- [x] getCurrentUser
+  - [x] Service
+  - [x] Resolver
+  - [x] Tests
+- [x] loginUser
+  - [x] Service
+  - [x] Resolver
+  - [x] Tests
+- [x] logoutUser
+  - [x] Service
+  - [x] Resolver
+  - [ ] Tests: Figure out how to test this with a real session
+- [x] confirmUserEmail
+  - [x] Service
+  - [x] Resolver
+  - [ ] Tests: Figure out how to test this with a real confirmation code
+- [ ] isAuthenticated middleware
+- [ ] sendNewConfirmationEmail
+  - [ ] Service
+  - [ ] Resolver
+  - [ ] Tests
+- [ ] sendPasswordResetEmail
+  - [ ] Service
+  - [ ] Resolve
+  - [ ] Tests
+- [ ] resetUserPassword
+  - [ ] Service
+  - [ ] Resolver
+  - [ ] Tests
+- [ ] changeUserPassword
+  - [ ] Service
+  - [ ] Resolver
+  - [ ] Tests
+- [ ] add sessions to redis (for multi-session tracking)
+- [ ] remove all sessions for a user when they log out or reset their password
+- [ ] implement the ability to lock account (for brute force password attempts or too many reset attempts, etc.)
+- [ ] rate limiting
+- [ ] dockerize application
