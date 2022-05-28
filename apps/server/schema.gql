@@ -8,6 +8,12 @@ type AuthFormResponse {
   user: User
 }
 
+input ChangeUserPasswordInput {
+  confirmPassword: String!
+  oldPassword: String!
+  password: String!
+}
+
 type FieldError {
   field: String!
   message: String!
@@ -19,6 +25,7 @@ input LoginUserInput {
 }
 
 type Mutation {
+  changeUserPassword(changeUserPasswordInput: ChangeUserPasswordInput!): AuthFormResponse!
   confirmUserEmail(code: String!): AuthFormResponse!
   loginUser(loginUserInput: LoginUserInput!): AuthFormResponse!
   logoutUser: Boolean!

@@ -1,8 +1,10 @@
-import { Arg, Ctx, Mutation, Query, Resolver } from "type-graphql";
+import { Arg, Ctx, Mutation, Query, Resolver, UseMiddleware } from "type-graphql";
 import { Service } from "typedi";
 import { User } from "../../entity";
+import { isAuthenticated } from "../../lib/middleware";
 import { AuthFormResponse, MyContext } from "../../types";
 import {
+  ChangeUserPasswordInput,
   LoginUserInput,
   RegisterUserInput,
   ResetUserPasswordInput,
@@ -124,5 +126,20 @@ export class UserResolver {
     @Ctx() ctx: MyContext
   ): Promise<AuthFormResponse> {
     return this.userService.resetPassword(resetUserPasswordInput, ctx);
+  }
+
+  /**
+   * Change User Password Mutation.
+   * @param {ChangeUserPasswordInput} changeUserPasswordInput - Object of type ChangeUserPasswordInput.
+   * @param {MyContext} ctx - Our GraphQL context.
+   * @return {Promise<AuthFormResponse>} Promise that resolves to an AuthFormResponse.
+   */
+  @Mutation(() => AuthFormResponse)
+  @UseMiddleware(isAuthenticated)
+  async changeUserPassword(
+    @Arg("changeUserPasswordInput") changeUserPasswordInput: ChangeUserPasswordInput,
+    @Ctx() ctx: MyContext
+  ): Promise<AuthFormResponse> {
+    return this.userService.changeUserPassword(changeUserPasswordInput, ctx);
   }
 }

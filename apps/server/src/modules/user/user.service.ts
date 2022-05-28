@@ -1,4 +1,8 @@
-import { loginUserSchema, resetPasswordSchema } from "@monorepo/yup-schemas";
+import {
+  changeUserPasswordSchema,
+  loginUserSchema,
+  resetPasswordSchema,
+} from "@monorepo/yup-schemas";
 import { SendMailOptions } from "nodemailer";
 import { Service } from "typedi";
 import { v4 as uuidV4 } from "uuid";
@@ -22,6 +26,7 @@ import {
   userNotFoundByCodeErrorMessage,
 } from "./error-messages";
 import {
+  ChangeUserPasswordInput,
   LoginUserInput,
   RegisterUserInput,
   ResetUserPasswordInput,
@@ -343,6 +348,58 @@ export class UserService {
 
     // Login user after successful password reset
     req.session.userId = user.id;
+    return { user };
+  };
+
+  /**
+   * Change user password
+   *
+   * Validates input, updates user password.
+   * @param {ChangeUserPasswordInput} changeUserPasswordInput - Object of type ChangeUserPasswordInput.
+   * @param {MyContext} ctx - Our GraphQL context.
+   * @return {Promise<AuthFormResponse>} Promise that resolves to an AuthFormResponse.
+   */
+  changeUserPassword = async (
+    changeUserPasswordInput: ChangeUserPasswordInput,
+    { req }: MyContext
+  ): Promise<AuthFormResponse> => {
+    // Double check that user is logged in
+    const { userId } = req.session;
+    if (!userId) {
+      throw new Error("Authentication failed, authorization denied.");
+    }
+
+    // Retrieve user from database
+    const user = await User.findOneBy({ id: userId });
+    if (!user) {
+      throw new Error("User not found.");
+    }
+
+    // Validate input
+    const { oldPassword, password: newPassword } = changeUserPasswordInput;
+    const errors = await validateFormInput(changeUserPasswordInput, changeUserPasswordSchema);
+    const passwordManager = new PasswordManager();
+    const isValidPassword = await passwordManager.compare(user.password, oldPassword);
+    if (!isValidPassword) {
+      errors.push({
+        field: "oldPassword",
+        message: "Password is incorrect.",
+      });
+    }
+    if (oldPassword === newPassword) {
+      errors.push({
+        field: "password",
+        message: "New password must be different from old password.",
+      });
+    }
+    if (errors.length > 0) {
+      return { errors };
+    }
+
+    // Update user password
+    await User.update({ id: userId }, { password: await passwordManager.toHash(newPassword) });
+
+    // Return user
     return { user };
   };
 }

@@ -37,15 +37,16 @@
   - [x] Resolver
   - [ ] Tests
 - [ ] changeUserPassword
-  - [ ] Service
-  - [ ] Resolver
+  - [x] Yup schema
+  - [x] Service
+  - [x] Resolver
   - [ ] Tests
 - [ ] add field resolver for user email that only allows the current user to see their own email
 - [ ] user dataloader
+- [ ] create email utils for user module
+- [ ] create email templates for user module email utils
+- [ ] rate limiting
 - [ ] add sessions to redis (for multi-session tracking)
 - [ ] remove all sessions for a user when they log out or reset their password
 - [ ] implement the ability to lock account (for brute force password attempts or too many reset attempts, etc.)
-- [ ] rate limiting
-- [ ] create email utils for user module
-- [ ] create email templates for user module email utils
 - [ ] dockerize application
