@@ -24,7 +24,7 @@ import {
 import {
   LoginUserInput,
   RegisterUserInput,
-  ResetPasswordInput,
+  ResetUserPasswordInput,
   SendNewConfirmationCodeInput,
 } from "./inputs";
 import { validateRegister } from "./utils/validate-register";
@@ -293,21 +293,21 @@ export class UserService {
    *
    * Validates input, checks token is valid, updates user password,
    * removes token from cache, and logs in the user.
-   * @param {ResetPasswordInput} resetPasswordInput - Object of type ResetPasswordInput.
+   * @param {ResetUserPasswordInput} resetUserPasswordInput - Object of type ResetUserPasswordInput.
    * @param {MyContext} ctx - Our GraphQL context.
    * @return {Promise<AuthFormResponse>} Promise that resolves to an AuthFormResponse.
    */
   resetPassword = async (
-    resetPasswordInput: ResetPasswordInput,
+    resetUserPasswordInput: ResetUserPasswordInput,
     { redis, req }: MyContext
   ): Promise<AuthFormResponse> => {
-    const errors = await validateFormInput(resetPasswordInput, resetPasswordSchema);
+    const errors = await validateFormInput(resetUserPasswordInput, resetPasswordSchema);
     if (errors.length > 0) {
       return { errors };
     }
 
     // Get user id from redis cache
-    const { token, password } = resetPasswordInput;
+    const { token, password } = resetUserPasswordInput;
     const prefixedToken = FORGOT_PASSWORD_PREFIX + token;
     const userId = await redis.get(prefixedToken);
     if (!userId) {

@@ -5,7 +5,7 @@ import { AuthFormResponse, MyContext } from "../../types";
 import {
   LoginUserInput,
   RegisterUserInput,
-  ResetPasswordInput,
+  ResetUserPasswordInput,
   SendNewConfirmationCodeInput,
 } from "./inputs";
 import { UserService } from "./user.service";
@@ -114,15 +114,15 @@ export class UserResolver {
 
   /**
    * Reset User Password Mutation.
-   * @param {ResetPasswordInput} resetPasswordInput - Object of type ResetPasswordInput.
+   * @param {ResetUserPasswordInput} resetUserPasswordInput - Object of type ResetUserPasswordInput.
    * @param {MyContext} ctx - Our GraphQL context.
    * @return {Promise<AuthFormResponse>} Promise that resolves to an AuthFormResponse.
    */
   @Mutation(() => AuthFormResponse)
-  async resetPassword(
-    @Arg("resetPasswordInput") resetPasswordInput: ResetPasswordInput,
+  async resetUserPassword(
+    @Arg("resetPasswordInput") resetUserPasswordInput: ResetUserPasswordInput,
     @Ctx() ctx: MyContext
   ): Promise<AuthFormResponse> {
-    return this.userService.resetPassword(resetPasswordInput, ctx);
+    return this.userService.resetPassword(resetUserPasswordInput, ctx);
   }
 }

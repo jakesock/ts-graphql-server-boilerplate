@@ -4,9 +4,9 @@ import { PasswordInput } from "./shared";
 
 @InputType()
 /**
- * Represents Reset Password input type.
+ * Represents Reset User Password input type.
  */
-export class ResetPasswordInput extends PasswordInput implements Partial<User> {
+export class ResetUserPasswordInput extends PasswordInput implements Partial<User> {
   [key: string]: unknown;
 
   // Reset password token

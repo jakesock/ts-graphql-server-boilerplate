@@ -23,6 +23,7 @@ type Mutation {
   loginUser(loginUserInput: LoginUserInput!): AuthFormResponse!
   logoutUser: Boolean!
   registerUser(registerUserInput: RegisterUserInput!): AuthFormResponse!
+  resetUserPassword(resetPasswordInput: ResetUserPasswordInput!): AuthFormResponse!
   sendNewConfirmationCode(sendNewConfirmationCodeInput: SendNewConfirmationCodeInput!): Boolean!
   sendPasswordResetEmail(email: String!): Boolean!
 }
@@ -37,6 +38,12 @@ input RegisterUserInput {
   email: String!
   password: String!
   username: String!
+}
+
+input ResetUserPasswordInput {
+  confirmPassword: String!
+  password: String!
+  token: String!
 }
 
 input SendNewConfirmationCodeInput {
