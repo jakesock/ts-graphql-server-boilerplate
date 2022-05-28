@@ -32,8 +32,9 @@
   - [x] Resolver
   - [ ] Tests: Figure out how to test email sending with codes
 - [ ] resetUserPassword
-  - [ ] Service
-  - [ ] Resolver
+  - [x] Yup schema
+  - [x] Service
+  - [x] Resolver
   - [ ] Tests
 - [ ] changeUserPassword
   - [ ] Service

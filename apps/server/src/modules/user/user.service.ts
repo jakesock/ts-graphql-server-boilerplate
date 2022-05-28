@@ -1,4 +1,4 @@
-import { loginUserSchema } from "@monorepo/yup-schemas";
+import { loginUserSchema, resetPasswordSchema } from "@monorepo/yup-schemas";
 import { SendMailOptions } from "nodemailer";
 import { Service } from "typedi";
 import { v4 as uuidV4 } from "uuid";
@@ -21,7 +21,12 @@ import {
   invalidLoginInputErrorMessage,
   userNotFoundByCodeErrorMessage,
 } from "./error-messages";
-import { LoginUserInput, RegisterUserInput, SendNewConfirmationCodeInput } from "./inputs";
+import {
+  LoginUserInput,
+  RegisterUserInput,
+  ResetPasswordInput,
+  SendNewConfirmationCodeInput,
+} from "./inputs";
 import { validateRegister } from "./utils/validate-register";
 
 @Service()
@@ -171,6 +176,37 @@ export class UserService {
     });
 
   /**
+   * Send new confirmation email to user.
+   *
+   * @param {SendNewConfirmationCodeInput} sendNewConfirmationCodeInput - Object of type SendNewConfirmationCodeInput.
+   * @param {MyContext} ctx - Our GraphQL context.
+   * @return {Promise<boolean>} Promsie that resolves to true if email sent successfully, false otherwise.
+   */
+  sendNewConfirmationEmail = async (
+    sendNewConfirmationCodeInput: SendNewConfirmationCodeInput,
+    ctx: MyContext
+  ): Promise<boolean> => {
+    const { userEmail, userId } = sendNewConfirmationCodeInput;
+    try {
+      // Send confirmation email
+      // TODO: Update this to use the production email service in the future
+      // TODO: Update this to user a different email template in the future
+      const confirmationCode = await createConfirmationCode(userId, ctx);
+      const mailOptions: SendMailOptions = {
+        from: '"Fred Foo 👻" <foo@example.com>',
+        to: userEmail,
+        subject: "Confirmation Code ✔",
+        text: `CODE: ${confirmationCode}`,
+        html: `<div><span>CODE: <b>${confirmationCode}</b></span></div>`,
+      };
+      await sendEmail(mailOptions);
+      return true; // Email send successfully
+    } catch {
+      return false; // Email send failed.
+    }
+  };
+
+  /**
    * Confirm user email.
    *
    * Validates code, finds user, and confirms user account.
@@ -214,37 +250,6 @@ export class UserService {
   };
 
   /**
-   * Send new confirmation email to user.
-   *
-   * @param {SendNewConfirmationCodeInput} sendNewConfirmationCodeInput - Object of type SendNewConfirmationCodeInput.
-   * @param {MyContext} ctx - Our GraphQL context.
-   * @return {Promise<boolean>} Promsie that resolves to true if email sent successfully, false otherwise.
-   */
-  sendNewConfirmationEmail = async (
-    sendNewConfirmationCodeInput: SendNewConfirmationCodeInput,
-    ctx: MyContext
-  ): Promise<boolean> => {
-    const { userEmail, userId } = sendNewConfirmationCodeInput;
-    try {
-      // Send confirmation email
-      // TODO: Update this to use the production email service in the future
-      // TODO: Update this to user a different email template in the future
-      const confirmationCode = await createConfirmationCode(userId, ctx);
-      const mailOptions: SendMailOptions = {
-        from: '"Fred Foo 👻" <foo@example.com>',
-        to: userEmail,
-        subject: "Confirmation Code ✔",
-        text: `CODE: ${confirmationCode}`,
-        html: `<div><span>CODE: <b>${confirmationCode}</b></span></div>`,
-      };
-      await sendEmail(mailOptions);
-      return true; // Email send successfully
-    } catch {
-      return false; // Email send failed.
-    }
-  };
-
-  /**
    * Send password reset email to user.
    *
    * Generates a new token and stores it in cache,
@@ -281,5 +286,63 @@ export class UserService {
     await sendEmail(mailOptions);
 
     return true;
+  };
+
+  /**
+   * Reset user password.
+   *
+   * Validates input, checks token is valid, updates user password,
+   * removes token from cache, and logs in the user.
+   * @param {ResetPasswordInput} resetPasswordInput - Object of type ResetPasswordInput.
+   * @param {MyContext} ctx - Our GraphQL context.
+   * @return {Promise<AuthFormResponse>} Promise that resolves to an AuthFormResponse.
+   */
+  resetPassword = async (
+    resetPasswordInput: ResetPasswordInput,
+    { redis, req }: MyContext
+  ): Promise<AuthFormResponse> => {
+    const errors = await validateFormInput(resetPasswordInput, resetPasswordSchema);
+    if (errors.length > 0) {
+      return { errors };
+    }
+
+    // Get user id from redis cache
+    const { token, password } = resetPasswordInput;
+    const prefixedToken = FORGOT_PASSWORD_PREFIX + token;
+    const userId = await redis.get(prefixedToken);
+    if (!userId) {
+      return {
+        errors: [
+          {
+            field: "token",
+            message: invalidExpiredConfirmationCodeErrorMessage,
+          },
+        ],
+      };
+    }
+
+    // Get user from database
+    const user = await User.findOneBy({ id: userId });
+    if (!user) {
+      return {
+        errors: [
+          {
+            field: "token",
+            message: userNotFoundByCodeErrorMessage,
+          },
+        ],
+      };
+    }
+
+    // Update user password
+    const passwordManager = new PasswordManager();
+    await User.update({ id: userId }, { password: await passwordManager.toHash(password) });
+
+    // Delete token from redis database
+    await redis.del(prefixedToken);
+
+    // Login user after successful password reset
+    req.session.userId = user.id;
+    return { user };
   };
 }

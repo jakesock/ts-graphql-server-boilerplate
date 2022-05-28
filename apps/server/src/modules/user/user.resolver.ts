@@ -2,7 +2,12 @@ import { Arg, Ctx, Mutation, Query, Resolver } from "type-graphql";
 import { Service } from "typedi";
 import { User } from "../../entity";
 import { AuthFormResponse, MyContext } from "../../types";
-import { LoginUserInput, RegisterUserInput, SendNewConfirmationCodeInput } from "./inputs";
+import {
+  LoginUserInput,
+  RegisterUserInput,
+  ResetPasswordInput,
+  SendNewConfirmationCodeInput,
+} from "./inputs";
 import { UserService } from "./user.service";
 
 @Service()
@@ -105,5 +110,19 @@ export class UserResolver {
     @Ctx() ctx: MyContext
   ): Promise<boolean> {
     return this.userService.sendPasswordResetEmail(email, ctx);
+  }
+
+  /**
+   * Reset User Password Mutation.
+   * @param {ResetPasswordInput} resetPasswordInput - Object of type ResetPasswordInput.
+   * @param {MyContext} ctx - Our GraphQL context.
+   * @return {Promise<AuthFormResponse>} Promise that resolves to an AuthFormResponse.
+   */
+  @Mutation(() => AuthFormResponse)
+  async resetPassword(
+    @Arg("resetPasswordInput") resetPasswordInput: ResetPasswordInput,
+    @Ctx() ctx: MyContext
+  ): Promise<AuthFormResponse> {
+    return this.userService.resetPassword(resetPasswordInput, ctx);
   }
 }
