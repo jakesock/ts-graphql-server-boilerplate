@@ -1,8 +1,14 @@
 import { loginUserSchema } from "@monorepo/yup-schemas";
 import { SendMailOptions } from "nodemailer";
 import { Service } from "typedi";
+import { v4 as uuidV4 } from "uuid";
 import { User } from "../../entity";
-import { CONFIRM_USER_PREFIX, COOKIE_NAME } from "../../lib/constants";
+import {
+  CONFIRM_USER_PREFIX,
+  COOKIE_NAME,
+  FORGOT_PASSWORD_PREFIX,
+  FRONTEND_URL,
+} from "../../lib/constants";
 import {
   createConfirmationCode,
   PasswordManager,
@@ -73,9 +79,9 @@ export class UserService {
     ctx.req.session.userId = newUser.id;
 
     // Send confirmation email
-    const confirmationCode = await createConfirmationCode(newUser.id, ctx);
     // TODO: Update this to use the production email service in the future
     // TODO: Update this to user a different email template in the future
+    const confirmationCode = await createConfirmationCode(newUser.id, ctx);
     const mailOptions: SendMailOptions = {
       from: '"Fred Foo 👻" <foo@example.com>',
       to: newUser.email,
@@ -221,9 +227,9 @@ export class UserService {
     const { userEmail, userId } = sendNewConfirmationCodeInput;
     try {
       // Send confirmation email
-      const confirmationCode = await createConfirmationCode(userId, ctx);
       // TODO: Update this to use the production email service in the future
       // TODO: Update this to user a different email template in the future
+      const confirmationCode = await createConfirmationCode(userId, ctx);
       const mailOptions: SendMailOptions = {
         from: '"Fred Foo 👻" <foo@example.com>',
         to: userEmail,
@@ -236,5 +242,44 @@ export class UserService {
     } catch {
       return false; // Email send failed.
     }
+  };
+
+  /**
+   * Send password reset email to user.
+   *
+   * Generates a new token and stores it in cache,
+   * sends an email containg a link with the token to reset password.
+   * @param {string} email - Email to send password reset email to.
+   * @param {MyContext} ctx - Our GraphQL context.
+   * @return {Promise<boolean>} Promise that resolves to true if email sent successfully, false otherwise.
+   */
+  sendPasswordResetEmail = async (email: string, { redis }: MyContext): Promise<boolean> => {
+    const user = await User.findOneBy({ email });
+    if (!user) {
+      return true; // Email not in DB, don't let user know if not
+    }
+
+    const token = uuidV4().split("-").join(""); // Generate new token
+    await redis.set(
+      FORGOT_PASSWORD_PREFIX + token,
+      user.id,
+      "EX",
+      1000 * 60 * 60 * 24 * 1 // 1 day
+    );
+
+    // TODO: Update this to use the production email service in the future
+    // TODO: Update this to user a different email template in the future
+    const resetPasswordHref = `${FRONTEND_URL}/reset-password?token=${token}`;
+    const resetPasswordLink = `<a href="${resetPasswordHref}">Reset Password</a>`;
+    const mailOptions: SendMailOptions = {
+      from: '"Fred Foo 👻" <foo@example.com>',
+      to: email,
+      subject: "Confirmation Code ✔",
+      text: `RESET PASSWORD: ${resetPasswordHref}`,
+      html: `<div><span>RESET PASSWORD: ${resetPasswordLink}</span></div>`,
+    };
+    await sendEmail(mailOptions);
+
+    return true;
   };
 }

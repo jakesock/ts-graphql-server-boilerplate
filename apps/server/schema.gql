@@ -24,6 +24,7 @@ type Mutation {
   logoutUser: Boolean!
   registerUser(registerUserInput: RegisterUserInput!): AuthFormResponse!
   sendNewConfirmationCode(sendNewConfirmationCodeInput: SendNewConfirmationCodeInput!): Boolean!
+  sendPasswordResetEmail(email: String!): Boolean!
 }
 
 type Query {

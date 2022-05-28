@@ -66,6 +66,20 @@ export class UserResolver {
   }
 
   /**
+   * Send New Confirmation Code Mutation.
+   * @param {SendNewConfirmationCodeInput} sendNewConfirmationCodeInput - Object of type SendNewConfirmationCodeInput.
+   * @param {MyContext} ctx - Our GraphQL context.
+   * @return {Promise<boolean>} Promise that resolves to true if email successfully sent, false otherwise.
+   */
+  @Mutation(() => Boolean)
+  async sendNewConfirmationCode(
+    @Arg("sendNewConfirmationCodeInput") sendNewConfirmationCodeInput: SendNewConfirmationCodeInput,
+    @Ctx() ctx: MyContext
+  ): Promise<boolean> {
+    return this.userService.sendNewConfirmationEmail(sendNewConfirmationCodeInput, ctx);
+  }
+
+  /**
    * Confirm User Email Mutation.
    * @param {string} code - Confirmation code sent to user email upon register.
    * @param {MyContext} ctx - Our GraphQL context.
@@ -80,16 +94,16 @@ export class UserResolver {
   }
 
   /**
-   * Send New Confirmation Code Mutation.
-   * @param {SendNewConfirmationCodeInput} sendNewConfirmationCodeInput - Object of type SendNewConfirmationCodeInput.
+   * Send Password Reset Email Mutation.
+   * @param {string} email - User email to send reset link to.
    * @param {MyContext} ctx - Our GraphQL context.
    * @return {Promise<boolean>} Promise that resolves to true if email successfully sent, false otherwise.
    */
   @Mutation(() => Boolean)
-  async sendNewConfirmationCode(
-    @Arg("sendNewConfirmationCodeInput") sendNewConfirmationCodeInput: SendNewConfirmationCodeInput,
+  async sendPasswordResetEmail(
+    @Arg("email") email: string,
     @Ctx() ctx: MyContext
   ): Promise<boolean> {
-    return this.userService.sendNewConfirmationEmail(sendNewConfirmationCodeInput, ctx);
+    return this.userService.sendPasswordResetEmail(email, ctx);
   }
 }

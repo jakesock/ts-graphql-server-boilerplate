@@ -2,7 +2,7 @@
 
 ## TODO:
 
-- [x] registerUser
+- [ ] registerUser
   - [x] Service
   - [x] Resolver
   - [ ] Tests: Test errors
@@ -14,23 +14,23 @@
   - [x] Service
   - [x] Resolver
   - [x] Tests
-- [x] logoutUser
+- [ ] logoutUser
   - [x] Service
   - [x] Resolver
   - [ ] Tests: Figure out how to test this with a real session
-- [x] confirmUserEmail
+- [ ] confirmUserEmail
   - [x] Service
   - [x] Resolver
   - [ ] Tests: Figure out how to test this with a real confirmation code
 - [x] isAuthenticated middleware
-- [x] sendNewConfirmationEmail
+- [ ] sendNewConfirmationEmail
   - [x] Service
   - [x] Resolver
-  - [ ] Tests: Figure out how to test email sending
+  - [ ] Tests: Figure out how to test email sending with codes
 - [ ] sendPasswordResetEmail
-  - [ ] Service
-  - [ ] Resolve
-  - [ ] Tests
+  - [x] Service
+  - [x] Resolver
+  - [ ] Tests: Figure out how to test email sending with codes
 - [ ] resetUserPassword
   - [ ] Service
   - [ ] Resolver
@@ -45,4 +45,6 @@
 - [ ] remove all sessions for a user when they log out or reset their password
 - [ ] implement the ability to lock account (for brute force password attempts or too many reset attempts, etc.)
 - [ ] rate limiting
+- [ ] create email utils for user module
+- [ ] create email templates for user module email utils
 - [ ] dockerize application
