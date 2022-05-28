@@ -2,7 +2,7 @@ import { Arg, Ctx, Mutation, Query, Resolver } from "type-graphql";
 import { Service } from "typedi";
 import { User } from "../../entity";
 import { AuthFormResponse, MyContext } from "../../types";
-import { LoginUserInput, RegisterUserInput } from "./inputs";
+import { LoginUserInput, RegisterUserInput, SendNewConfirmationCodeInput } from "./inputs";
 import { UserService } from "./user.service";
 
 @Service()
@@ -77,5 +77,19 @@ export class UserResolver {
     @Ctx() ctx: MyContext
   ): Promise<AuthFormResponse> {
     return this.userService.confirmUserEmail(code, ctx);
+  }
+
+  /**
+   * Send New Confirmation Code Mutation.
+   * @param {SendNewConfirmationCodeInput} sendNewConfirmationCodeInput - Object of type SendNewConfirmationCodeInput.
+   * @param {MyContext} ctx - Our GraphQL context.
+   * @return {Promise<boolean>} Promise that resolves to true if email successfully sent, false otherwise.
+   */
+  @Mutation(() => Boolean)
+  async sendNewConfirmationCode(
+    @Arg("sendNewConfirmationCodeInput") sendNewConfirmationCodeInput: SendNewConfirmationCodeInput,
+    @Ctx() ctx: MyContext
+  ): Promise<boolean> {
+    return this.userService.sendNewConfirmationEmail(sendNewConfirmationCodeInput, ctx);
   }
 }

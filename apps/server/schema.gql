@@ -23,6 +23,7 @@ type Mutation {
   loginUser(loginUserInput: LoginUserInput!): AuthFormResponse!
   logoutUser: Boolean!
   registerUser(registerUserInput: RegisterUserInput!): AuthFormResponse!
+  sendNewConfirmationCode(sendNewConfirmationCodeInput: SendNewConfirmationCodeInput!): Boolean!
 }
 
 type Query {
@@ -35,6 +36,11 @@ input RegisterUserInput {
   email: String!
   password: String!
   username: String!
+}
+
+input SendNewConfirmationCodeInput {
+  userEmail: String!
+  userId: String!
 }
 
 type User {

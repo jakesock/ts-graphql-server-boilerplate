@@ -23,10 +23,10 @@
   - [x] Resolver
   - [ ] Tests: Figure out how to test this with a real confirmation code
 - [x] isAuthenticated middleware
-- [ ] sendNewConfirmationEmail
-  - [ ] Service
-  - [ ] Resolver
-  - [ ] Tests
+- [x] sendNewConfirmationEmail
+  - [x] Service
+  - [x] Resolver
+  - [ ] Tests: Figure out how to test email sending
 - [ ] sendPasswordResetEmail
   - [ ] Service
   - [ ] Resolve

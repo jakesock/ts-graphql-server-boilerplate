@@ -15,7 +15,7 @@ import {
   invalidLoginInputErrorMessage,
   userNotFoundByCodeErrorMessage,
 } from "./error-messages";
-import { LoginUserInput, RegisterUserInput } from "./inputs";
+import { LoginUserInput, RegisterUserInput, SendNewConfirmationCodeInput } from "./inputs";
 import { validateRegister } from "./utils/validate-register";
 
 @Service()
@@ -79,9 +79,9 @@ export class UserService {
     const mailOptions: SendMailOptions = {
       from: '"Fred Foo 👻" <foo@example.com>',
       to: newUser.email,
-      subject: "Hello ✔",
-      text: "Hello world?",
-      html: `<b>${confirmationCode}</b>`,
+      subject: "Confirmation Code ✔",
+      text: `CODE: ${confirmationCode}`,
+      html: `<div><span>CODE: <b>${confirmationCode}</b></span></div>`,
     };
     await sendEmail(mailOptions);
 
@@ -205,5 +205,36 @@ export class UserService {
     return {
       user: updatedUser, // Confirmation successful, return updated user
     };
+  };
+
+  /**
+   * Send new confirmation email to user.
+   *
+   * @param {SendNewConfirmationCodeInput} sendNewConfirmationCodeInput - Object of type SendNewConfirmationCodeInput.
+   * @param {MyContext} ctx - Our GraphQL context.
+   * @return {Promise<boolean>} Promsie that resolves to true if email sent successfully, false otherwise.
+   */
+  sendNewConfirmationEmail = async (
+    sendNewConfirmationCodeInput: SendNewConfirmationCodeInput,
+    ctx: MyContext
+  ): Promise<boolean> => {
+    const { userEmail, userId } = sendNewConfirmationCodeInput;
+    try {
+      // Send confirmation email
+      const confirmationCode = await createConfirmationCode(userId, ctx);
+      // TODO: Update this to use the production email service in the future
+      // TODO: Update this to user a different email template in the future
+      const mailOptions: SendMailOptions = {
+        from: '"Fred Foo 👻" <foo@example.com>',
+        to: userEmail,
+        subject: "Confirmation Code ✔",
+        text: `CODE: ${confirmationCode}`,
+        html: `<div><span>CODE: <b>${confirmationCode}</b></span></div>`,
+      };
+      await sendEmail(mailOptions);
+      return true; // Email send successfully
+    } catch {
+      return false; // Email send failed.
+    }
   };
 }
