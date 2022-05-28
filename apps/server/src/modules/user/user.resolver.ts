@@ -64,4 +64,18 @@ export class UserResolver {
   async logoutUser(@Ctx() ctx: MyContext): Promise<boolean> {
     return this.userService.logout(ctx);
   }
+
+  /**
+   * Confirm User Email Mutation.
+   * @param {string} code - Confirmation code sent to user email upon register.
+   * @param {MyContext} ctx - Our GraphQL context.
+   * @return {Promise<AuthFormResponse>}
+   */
+  @Mutation(() => AuthFormResponse)
+  async confirmUserEmail(
+    @Arg("code") code: string,
+    @Ctx() ctx: MyContext
+  ): Promise<AuthFormResponse> {
+    return this.userService.confirmUserEmail(code, ctx);
+  }
 }

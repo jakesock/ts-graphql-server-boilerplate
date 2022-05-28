@@ -19,6 +19,7 @@ input LoginUserInput {
 }
 
 type Mutation {
+  confirmUserEmail(code: String!): AuthFormResponse!
   loginUser(loginUserInput: LoginUserInput!): AuthFormResponse!
   logoutUser: Boolean!
   registerUser(registerUserInput: RegisterUserInput!): AuthFormResponse!

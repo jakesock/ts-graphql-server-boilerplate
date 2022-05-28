@@ -2,7 +2,7 @@ import { loginUserSchema } from "@monorepo/yup-schemas";
 import { SendMailOptions } from "nodemailer";
 import { Service } from "typedi";
 import { User } from "../../entity";
-import { COOKIE_NAME } from "../../lib/constants";
+import { CONFIRM_USER_PREFIX, COOKIE_NAME } from "../../lib/constants";
 import {
   createConfirmationCode,
   PasswordManager,
@@ -10,7 +10,11 @@ import {
   validateFormInput,
 } from "../../lib/utils";
 import { AuthFormResponse, MyContext } from "../../types";
-import { invalidLoginInputErrorMessage } from "./error-messages";
+import {
+  invalidExpiredConfirmationCodeErrorMessage,
+  invalidLoginInputErrorMessage,
+  userNotFoundByCodeErrorMessage,
+} from "./error-messages";
 import { LoginUserInput, RegisterUserInput } from "./inputs";
 import { validateRegister } from "./utils/validate-register";
 
@@ -70,6 +74,8 @@ export class UserService {
 
     // Send confirmation email
     const confirmationCode = await createConfirmationCode(newUser.id, ctx);
+    // TODO: Update this to use the production email service in the future
+    // TODO: Update this to user a different email template in the future
     const mailOptions: SendMailOptions = {
       from: '"Fred Foo 👻" <foo@example.com>',
       to: newUser.email,
@@ -157,4 +163,47 @@ export class UserService {
         }
       });
     });
+
+  /**
+   * Confirm user email.
+   *
+   * Validates code, finds user, and confirms user account.
+   * Deletes confirmation code from redis database.
+   * @param {string} code - Token sent to user email upon register.
+   * @param {MyContext} ctx - Our GraphQL context.
+   * @return {Promise<AuthFormResponse>} Promise that resolves to an AuthFormResponse.
+   */
+  confirmUserEmail = async (code: string, { redis }: MyContext): Promise<AuthFormResponse> => {
+    const prefixedToken = CONFIRM_USER_PREFIX + code;
+    const userId = await redis.get(prefixedToken);
+    if (!userId) {
+      return {
+        errors: [
+          {
+            field: "code",
+            message: invalidExpiredConfirmationCodeErrorMessage,
+          },
+        ],
+      };
+    }
+
+    const user = await User.findOneBy({ id: userId });
+    if (!user) {
+      return {
+        errors: [
+          {
+            field: "code",
+            message: userNotFoundByCodeErrorMessage,
+          },
+        ],
+      };
+    }
+
+    Object.assign(user, { isConfirmed: true }); // Update user to confirmed
+    await redis.del(prefixedToken); // Delete token from redis database
+    const updatedUser = await user.save(); // Save updated user to database
+    return {
+      user: updatedUser, // Confirmation successful, return updated user
+    };
+  };
 }
