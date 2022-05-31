@@ -1,4 +1,13 @@
-import { Arg, Ctx, Mutation, Query, Resolver, UseMiddleware } from "type-graphql";
+import {
+  Arg,
+  Ctx,
+  FieldResolver,
+  Mutation,
+  Query,
+  Resolver,
+  Root,
+  UseMiddleware,
+} from "type-graphql";
 import { Service } from "typedi";
 import { User } from "../../entity";
 import { isAuthenticated } from "../../lib/middleware";
@@ -23,6 +32,21 @@ export class UserResolver {
    * @param {UserService} userService - Service that provides methods which performs business logic for the user resolver.
    */
   constructor(private readonly userService: UserService) {}
+
+  /**
+   * User: Email field resolver.
+   * Resolves user email field only if user is authenticated and is
+   * requesting own email.
+   * @param {User} user - User entity (roor object from which to derive the field).
+   * @param {MyContext} ctx - Our GraphQL context.
+   * @return {string} - User email, if authenticated. Otherwise, an empty string.
+   */
+  @FieldResolver(() => String)
+  email(@Root() user: User, @Ctx() { req }: MyContext): string {
+    // This is the current user, it's okay to them their own email.
+    if (req.session.userId === user.id) return user.email;
+    return ""; // Current user wants to see someone else's email.
+  }
 
   /**
    * Get Current User Query.

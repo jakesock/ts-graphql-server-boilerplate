@@ -41,7 +41,7 @@
   - [x] Service
   - [x] Resolver
   - [ ] Tests
-- [ ] add field resolver for user email that only allows the current user to see their own email
+- [x] add field resolver for user email that only allows the current user to see their own email
 - [ ] user dataloader
 - [ ] create email utils for user module
 - [ ] create email templates for user module email utils
