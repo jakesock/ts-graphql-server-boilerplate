@@ -3,7 +3,9 @@ import { message } from "../../lib/error-messages";
 import { confirmPasswordFieldSchema, passwordFieldSchema } from "./shared";
 
 export const resetPasswordSchema = Yup.object().shape({
-  token: Yup.string().uuid("Invalid token").required(message.common.required),
+  token: Yup.string()
+    .matches(/^([\da-z]){32}$/, message.common.invalidToken)
+    .required(message.common.required),
   password: passwordFieldSchema,
   confirmPassword: confirmPasswordFieldSchema,
 });
