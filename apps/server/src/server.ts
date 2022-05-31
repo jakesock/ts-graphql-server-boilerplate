@@ -11,6 +11,7 @@ import { createComplexityPlugin } from "graphql-query-complexity-apollo-plugin";
 import "reflect-metadata";
 import { corsConfig, redisClient, sessionConfig } from "./lib/config";
 import { PROD } from "./lib/constants";
+import { createUserLoader } from "./lib/loaders";
 import { buildSchema } from "./lib/utils";
 
 type CreateApolloExpressServerReturnType = Promise<{
@@ -41,6 +42,7 @@ export async function createApolloExpressServer(): CreateApolloExpressServerRetu
       req,
       res,
       redis: redisClient,
+      userLoader: createUserLoader(),
     }),
     plugins: [
       // Allow query complexity limiting
