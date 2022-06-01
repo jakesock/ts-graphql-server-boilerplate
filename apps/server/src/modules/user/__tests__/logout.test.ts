@@ -39,7 +39,7 @@ const logoutUserMutation = `
 describe("USER: Logout User Mutation", () => {
   it("returns true on successful logout", async () => {
     // Logout User
-    const logoutUserResponse = await gqlCall({
+    const logoutUserResponse = await gqlCall<boolean>({
       source: logoutUserMutation,
       userId,
     });

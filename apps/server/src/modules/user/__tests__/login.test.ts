@@ -3,6 +3,7 @@ import { User } from "../../../entity";
 import { redisClient } from "../../../lib/config";
 import { PasswordManager } from "../../../lib/utils";
 import { gqlCall, redisTestClient, testConnection } from "../../../test/utils";
+import { AuthFormResponse, FieldError } from "../../../types";
 import { invalidLoginInputErrorMessage } from "../error-messages";
 
 let TestDataSource: DataSource;
@@ -12,15 +13,15 @@ const testUser = {
   password: "LoginUser123",
 };
 
-const expectedUsernameError = {
+const expectedUsernameError: FieldError = {
   field: "usernameOrEmail",
   message: invalidLoginInputErrorMessage,
 };
-const expectedPasswordError = {
+const expectedPasswordError: FieldError = {
   field: "password",
   message: invalidLoginInputErrorMessage,
 };
-const expectedErrorsArray = [expectedUsernameError, expectedPasswordError];
+const expectedErrorsArray: FieldError[] = [expectedUsernameError, expectedPasswordError];
 const expectedInvalidDataResponse = {
   loginUser: {
     user: null,
@@ -67,7 +68,7 @@ describe("USER: Login User Mutation", () => {
   it("returns user with valid input", async () => {
     const { username, email, password } = testUser;
 
-    const response = await gqlCall({
+    const response = await gqlCall<AuthFormResponse>({
       source: loginUserMutation,
       variableValues: {
         loginUserInput: {
@@ -90,7 +91,7 @@ describe("USER: Login User Mutation", () => {
   it("returns user with email login", async () => {
     const { username, email, password } = testUser;
 
-    const response = await gqlCall({
+    const response = await gqlCall<AuthFormResponse>({
       source: loginUserMutation,
       variableValues: {
         loginUserInput: {
@@ -112,7 +113,7 @@ describe("USER: Login User Mutation", () => {
   });
 
   it("returns error with invalid username/email", async () => {
-    const response = await gqlCall({
+    const response = await gqlCall<AuthFormResponse>({
       source: loginUserMutation,
       variableValues: {
         loginUserInput: {
@@ -127,7 +128,7 @@ describe("USER: Login User Mutation", () => {
   });
 
   it("returns error with invalid password", async () => {
-    const response = await gqlCall({
+    const response = await gqlCall<AuthFormResponse>({
       source: loginUserMutation,
       variableValues: {
         loginUserInput: {
@@ -142,7 +143,7 @@ describe("USER: Login User Mutation", () => {
   });
 
   it("returns error with nonexistent user data", async () => {
-    const response = await gqlCall({
+    const response = await gqlCall<AuthFormResponse>({
       source: loginUserMutation,
       variableValues: {
         loginUserInput: {
