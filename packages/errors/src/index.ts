@@ -1,1 +1,2 @@
-export const hello = "Hello World";
+export * from "./errors";
+export * from "./types";

@@ -6,7 +6,7 @@
   "types": "dist/src/index.d.ts",
   "license": "MIT",
   "scripts": {
-    "build": "tsc",
+    "build": "rimraf ./dist && tsc",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx --fix",
     "format": "prettier --write .",
     "test": "jest",

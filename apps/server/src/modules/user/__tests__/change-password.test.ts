@@ -1,3 +1,4 @@
+import { NotAuthenticatedError, ServerErrorMessage, StatusCodes } from "@monorepo/errors";
 import { DataSource } from "typeorm";
 import { User } from "../../../entity";
 import { redisClient } from "../../../lib/config";
@@ -188,7 +189,13 @@ describe("USER: Change User Password Mutation", () => {
       },
     });
 
+    const error = response.errors![0];
+    const originalError = error.originalError as NotAuthenticatedError;
+
     expect(response.errors).toBeTruthy();
+    expect(error).toBeTruthy();
+    expect(error.message).toEqual(ServerErrorMessage.NOT_AUTHENTICATED);
+    expect(originalError.statusCode).toEqual(StatusCodes.NOT_AUTHORIZED);
   });
 
   it("returns error if old password is incorrect", () => {

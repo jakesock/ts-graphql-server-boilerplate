@@ -23,6 +23,7 @@
     "table:drop": "yarn run typeorm:cli -- migration:revert"
   },
   "dependencies": {
+    "@monorepo/errors": "workspace:*",
     "@monorepo/yup-schemas": "workspace:*",
     "apollo-server-core": "^3.7.0",
     "apollo-server-express": "^3.7.0",

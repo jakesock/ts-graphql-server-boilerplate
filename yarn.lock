@@ -970,7 +970,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@monorepo/errors@workspace:packages/errors":
+"@monorepo/errors@workspace:*, @monorepo/errors@workspace:packages/errors":
   version: 0.0.0-use.local
   resolution: "@monorepo/errors@workspace:packages/errors"
   dependencies:
@@ -992,6 +992,7 @@ __metadata:
   resolution: "@monorepo/server@workspace:apps/server"
   dependencies:
     "@monorepo/config": "workspace:*"
+    "@monorepo/errors": "workspace:*"
     "@monorepo/tsconfig": "workspace:*"
     "@monorepo/yup-schemas": "workspace:*"
     "@types/connect-redis": ^0.0.18

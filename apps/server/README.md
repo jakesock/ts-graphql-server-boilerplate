@@ -42,8 +42,8 @@
   - [x] Resolver
   - [ ] Add error for new password being the same as the old one
   - [ ] Tests
-- [ ] Create regulated error responses
-- [ ] Implement custom server error responses
+- [x] Create regulated error responses
+- [x] Implement custom server error responses
 - [ ] Add custom error handling throughout the app
 - [x] add field resolver for user email that only allows the current user to see their own email
 - [x] user dataloader

@@ -1,3 +1,4 @@
+import { CustomError } from "@monorepo/errors";
 import {
   ApolloServerPluginLandingPageDisabled,
   ApolloServerPluginLandingPageGraphQLPlayground,
@@ -60,6 +61,23 @@ export async function createApolloExpressServer(): CreateApolloExpressServerRetu
         ? ApolloServerPluginLandingPageDisabled()
         : ApolloServerPluginLandingPageGraphQLPlayground(),
     ],
+    formatError: (error) => {
+      const { originalError, locations, path } = error;
+      let { message } = error;
+      let status = 500;
+
+      if (originalError && originalError instanceof CustomError) {
+        message = originalError.message;
+        status = originalError.statusCode;
+      }
+
+      return {
+        message,
+        status,
+        locations,
+        path,
+      };
+    },
   });
 
   return {

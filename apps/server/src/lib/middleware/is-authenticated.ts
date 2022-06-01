@@ -1,3 +1,4 @@
+import { NotAuthenticatedError } from "@monorepo/errors";
 import { MiddlewareFn, NextFn, ResolverData } from "type-graphql";
 import { MyContext } from "../../types";
 
@@ -13,7 +14,7 @@ export const isAuthenticated: MiddlewareFn<MyContext> = async (
   next: NextFn
 ) => {
   if (!context.req.session.userId) {
-    throw new Error("User not authenticated, authorization denied.");
+    throw new NotAuthenticatedError();
   }
 
   return next();
