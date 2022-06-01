@@ -14,8 +14,8 @@ interface IGQLCallOptions {
   userId?: string;
 }
 
-type GQLCallReturn = Promise<
-  ExecutionResult<{ [key: string]: unknown }, { [key: string]: unknown }>
+type GQLCallReturn<T = unknown> = Promise<
+  ExecutionResult<{ [key: string]: T }, { [key: string]: unknown }>
 >;
 
 let schema: GraphQLSchema;
@@ -26,7 +26,11 @@ export const redisTestClient = new Redis();
  * @param {IGQLCallOptions} options - Options for the GraphQL query.
  * @return {GQLCallReturn} Promise that resolves to the result of the GraphQL query.
  */
-export async function gqlCall({ source, variableValues, userId }: IGQLCallOptions): GQLCallReturn {
+export async function gqlCall<T = unknown>({
+  source,
+  variableValues,
+  userId,
+}: IGQLCallOptions): GQLCallReturn<T> {
   if (!schema) {
     schema = await buildSchema();
   }

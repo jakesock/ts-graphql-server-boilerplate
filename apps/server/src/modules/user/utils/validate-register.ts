@@ -2,6 +2,7 @@ import { registerUserSchema } from "@monorepo/yup-schemas";
 import { User } from "../../../entity";
 import { validateFormInput } from "../../../lib/utils";
 import { FieldError } from "../../../types";
+import { emailTakenErrorMessage, usernameTakenErrorMessage } from "../error-messages";
 import { RegisterUserInput } from "../inputs";
 
 /**
@@ -20,7 +21,7 @@ export async function validateRegister(
   if (existingUsername) {
     errors.push({
       field: "username",
-      message: "Username already in use",
+      message: usernameTakenErrorMessage,
     });
   }
 
@@ -29,7 +30,7 @@ export async function validateRegister(
   if (existingEmail) {
     errors.push({
       field: "email",
-      message: "Email already in use",
+      message: emailTakenErrorMessage,
     });
   }
 

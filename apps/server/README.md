@@ -2,10 +2,10 @@
 
 ## TODO:
 
-- [ ] registerUser
+- [x] registerUser
   - [x] Service
   - [x] Resolver
-  - [ ] Tests: Test errors
+  - [x] Tests: Test errors
 - [x] getCurrentUser
   - [x] Service
   - [x] Resolver

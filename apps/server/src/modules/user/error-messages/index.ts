@@ -3,3 +3,4 @@ export {
   userNotFoundByCodeErrorMessage,
 } from "./confirm-user-email";
 export { invalidLoginInputErrorMessage } from "./invalid-login";
+export { emailTakenErrorMessage, usernameTakenErrorMessage } from "./register";
