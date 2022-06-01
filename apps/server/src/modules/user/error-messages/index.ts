@@ -1,4 +1,8 @@
 export {
+  changePasswordNewPasswordMustBeDifferentErrorMessage,
+  changePasswordOldPasswordIncorrectErrorMessage,
+} from "./change-password";
+export {
   invalidExpiredConfirmationCodeErrorMessage,
   userNotFoundByCodeErrorMessage,
 } from "./confirm-user-email";

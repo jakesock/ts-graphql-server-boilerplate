@@ -9,6 +9,8 @@ import { CONFIRM_USER_PREFIX, COOKIE_NAME, FORGOT_PASSWORD_PREFIX } from "../../
 import { PasswordManager, validateFormInput } from "../../lib/utils";
 import { AuthFormResponse, MyContext } from "../../types";
 import {
+  changePasswordNewPasswordMustBeDifferentErrorMessage,
+  changePasswordOldPasswordIncorrectErrorMessage,
   invalidExpiredConfirmationCodeErrorMessage,
   invalidLoginInputErrorMessage,
   userNotFoundByCodeErrorMessage,
@@ -332,13 +334,13 @@ export class UserService {
     if (!isValidPassword) {
       errors.push({
         field: "oldPassword",
-        message: "Password is incorrect.",
+        message: changePasswordOldPasswordIncorrectErrorMessage,
       });
     }
     if (oldPassword === newPassword) {
       errors.push({
         field: "password",
-        message: "New password must be different from old password.",
+        message: changePasswordNewPasswordMustBeDifferentErrorMessage,
       });
     }
     if (errors.length > 0) {
