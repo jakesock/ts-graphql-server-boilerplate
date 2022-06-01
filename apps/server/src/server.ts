@@ -1,4 +1,4 @@
-import { CustomError } from "@monorepo/errors";
+import { CustomError, InternalServerError } from "@monorepo/errors";
 import {
   ApolloServerPluginLandingPageDisabled,
   ApolloServerPluginLandingPageGraphQLPlayground,
@@ -28,60 +28,64 @@ type CreateApolloExpressServerReturnType = Promise<{
  * @return {CreateApolloExpressServerReturnType} Promise that resolves to an object containing the Apollo Server and Express App.
  */
 export async function createApolloExpressServer(): CreateApolloExpressServerReturnType {
-  // Define Express App
-  const app = express();
+  try {
+    // Define Express App
+    const app = express();
 
-  // Apply express middlewares
-  app.use(cors(corsConfig));
-  app.use(session(sessionConfig));
+    // Apply express middlewares
+    app.use(cors(corsConfig));
+    app.use(session(sessionConfig));
 
-  // Define Apollo Server and GraphQL Schema
-  const schema = await buildSchema();
-  const apolloServer = new ApolloServer({
-    schema,
-    context: ({ req, res }) => ({
-      req,
-      res,
-      redis: redisClient,
-      userLoader: createUserLoader(),
-    }),
-    plugins: [
-      // Allow query complexity limiting
-      // TODO: After creating front-end queries/mutations, come back and change max complexity to reflect said queries/mutations
-      createComplexityPlugin({
-        schema,
-        estimators: [fieldExtensionsEstimator(), simpleEstimator({ defaultComplexity: 1 })],
-        maximumComplexity: 1000,
-        onComplete: (complexity) => {
-          // eslint-disable-next-line no-console
-          console.log("Query Complexity:", complexity);
-        },
+    // Define Apollo Server and GraphQL Schema
+    const schema = await buildSchema();
+    const apolloServer = new ApolloServer({
+      schema,
+      context: ({ req, res }) => ({
+        req,
+        res,
+        redis: redisClient,
+        userLoader: createUserLoader(),
       }),
-      PROD
-        ? ApolloServerPluginLandingPageDisabled()
-        : ApolloServerPluginLandingPageGraphQLPlayground(),
-    ],
-    formatError: (error) => {
-      const { originalError, locations, path } = error;
-      let { message } = error;
-      let status = 500;
+      plugins: [
+        // Allow query complexity limiting
+        // TODO: After creating front-end queries/mutations, come back and change max complexity to reflect said queries/mutations
+        createComplexityPlugin({
+          schema,
+          estimators: [fieldExtensionsEstimator(), simpleEstimator({ defaultComplexity: 1 })],
+          maximumComplexity: 1000,
+          onComplete: (complexity) => {
+            // eslint-disable-next-line no-console
+            console.log("Query Complexity:", complexity);
+          },
+        }),
+        PROD
+          ? ApolloServerPluginLandingPageDisabled()
+          : ApolloServerPluginLandingPageGraphQLPlayground(),
+      ],
+      formatError: (error) => {
+        const { originalError, locations, path } = error;
+        let { message } = error;
+        let status = 500;
 
-      if (originalError && originalError instanceof CustomError) {
-        message = originalError.message;
-        status = originalError.statusCode;
-      }
+        if (originalError && originalError instanceof CustomError) {
+          message = originalError.message;
+          status = originalError.statusCode;
+        }
 
-      return {
-        message,
-        status,
-        locations,
-        path,
-      };
-    },
-  });
+        return {
+          message,
+          status,
+          locations,
+          path,
+        };
+      },
+    });
 
-  return {
-    app,
-    apolloServer,
-  };
+    return {
+      app,
+      apolloServer,
+    };
+  } catch {
+    throw new InternalServerError("Error buiding GraphQL schema");
+  }
 }

@@ -1,6 +1,7 @@
 // eslint-disable-next-line eslint-comments/disable-enable-pair
 /* eslint-disable no-console */
 
+import { InternalServerError } from "@monorepo/errors";
 import { PROD, SERVER_PORT } from "./lib/constants";
 import { initializeDatabase } from "./lib/utils";
 import { createApolloExpressServer } from "./server";
@@ -11,28 +12,32 @@ import { createApolloExpressServer } from "./server";
  * Initializes database connection, starts apollo server, applies Apollo Server middleware and starts Express server.
  */
 export async function bootstrap(): Promise<void> {
-  const { apolloServer, app } = await createApolloExpressServer();
+  try {
+    const { apolloServer, app } = await createApolloExpressServer();
 
-  // Initialize database connection
-  await initializeDatabase();
+    // Initialize database connection
+    await initializeDatabase();
 
-  // Start Apollo Server. Without this, Apollo will throw an error.
-  await apolloServer.start();
+    // Start Apollo Server. Without this, Apollo will throw an error.
+    await apolloServer.start();
 
-  // Apply Apollo Server middlewares
-  apolloServer.applyMiddleware({
-    app,
-    cors: false,
-  });
+    // Apply Apollo Server middlewares
+    apolloServer.applyMiddleware({
+      app,
+      cors: false,
+    });
 
-  // Start Express Server on port "SERVER_PORT"
-  app.listen(SERVER_PORT, () => {
-    if (PROD) {
-      console.log(`Server started on port ${SERVER_PORT}.`);
-    } else {
-      console.log(
-        `Server started on port ${SERVER_PORT}! Playground available at http://localhost:${SERVER_PORT}${apolloServer.graphqlPath}`
-      );
-    }
-  });
+    // Start Express Server on port "SERVER_PORT"
+    app.listen(SERVER_PORT, () => {
+      if (PROD) {
+        console.log(`Server started on port ${SERVER_PORT}.`);
+      } else {
+        console.log(
+          `Server started on port ${SERVER_PORT}! Playground available at http://localhost:${SERVER_PORT}${apolloServer.graphqlPath}`
+        );
+      }
+    });
+  } catch {
+    throw new InternalServerError("Error bootstrapping server");
+  }
 }

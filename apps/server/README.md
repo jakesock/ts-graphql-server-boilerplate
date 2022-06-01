@@ -36,15 +36,14 @@
   - [x] Service
   - [x] Resolver
   - [ ] Tests: Figure out how to test this with a real reset code
-- [ ] changeUserPassword
+- [x] changeUserPassword
   - [x] Yup schema
   - [x] Service
   - [x] Resolver
-  - [ ] Add error for new password being the same as the old one
-  - [ ] Tests
+  - [x] Tests
 - [x] Create regulated error responses
 - [x] Implement custom server error responses
-- [ ] Add custom error handling throughout the app
+- [x] Add custom error handling throughout the app
 - [x] add field resolver for user email that only allows the current user to see their own email
 - [x] user dataloader
 - [x] create email utils for user module

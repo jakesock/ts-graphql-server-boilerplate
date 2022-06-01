@@ -1,3 +1,4 @@
+import { InternalServerError } from "@monorepo/errors";
 import { v4 as uuidv4 } from "uuid";
 import { MyContext } from "../../types";
 import { CONFIRM_USER_PREFIX } from "../constants";
@@ -12,13 +13,17 @@ export const createConfirmationCode = async (
   userId: string,
   { redis }: MyContext
 ): Promise<string> => {
-  const code = uuidv4().split("-")[0].toUpperCase();
-  await redis.set(
-    CONFIRM_USER_PREFIX + code, // key
-    userId, // value
-    "EX", // Set expires to true
-    60 * 15 // 15 minute expiration time
-  );
+  try {
+    const code = uuidv4().split("-")[0].toUpperCase();
+    await redis.set(
+      CONFIRM_USER_PREFIX + code, // key
+      userId, // value
+      "EX", // Set expires to true
+      60 * 15 // 15 minute expiration time
+    );
 
-  return code;
+    return code;
+  } catch {
+    throw new InternalServerError("Error creating confirmation code");
+  }
 };

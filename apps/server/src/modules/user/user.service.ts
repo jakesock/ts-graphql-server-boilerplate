@@ -1,3 +1,4 @@
+import { InternalServerError, NotAuthenticatedError, NotFoundError } from "@monorepo/errors";
 import {
   changeUserPasswordSchema,
   loginUserSchema,
@@ -59,35 +60,39 @@ export class UserService {
     registerUserInput: RegisterUserInput,
     ctx: MyContext
   ): Promise<AuthFormResponse> => {
-    // Validate input, return errors (if any)
-    const errors = await validateRegister(registerUserInput);
-    if (errors.length > 0) {
-      return { errors };
+    try {
+      // Validate input, return errors (if any)
+      const errors = await validateRegister(registerUserInput);
+      if (errors.length > 0) {
+        return { errors };
+      }
+
+      // Hash password
+      const passwordManager = new PasswordManager();
+      const hashedPassword = await passwordManager.toHash(registerUserInput.password);
+
+      // Create new user and save to database
+      const newUser = await User.create({
+        username: registerUserInput.username,
+        email: registerUserInput.email,
+        password: hashedPassword,
+      }).save();
+
+      // Add userId to session (Log them in)
+      ctx.req.session.userId = newUser.id;
+
+      // Send confirmation email
+      await sendConfirmationCodeEmail({
+        userId: newUser.id,
+        userEmail: newUser.email,
+        ctx,
+      });
+
+      // Return user data
+      return { user: newUser };
+    } catch {
+      throw new InternalServerError("Error registering user");
     }
-
-    // Hash password
-    const passwordManager = new PasswordManager();
-    const hashedPassword = await passwordManager.toHash(registerUserInput.password);
-
-    // Create new user and save to database
-    const newUser = await User.create({
-      username: registerUserInput.username,
-      email: registerUserInput.email,
-      password: hashedPassword,
-    }).save();
-
-    // Add userId to session (Log them in)
-    ctx.req.session.userId = newUser.id;
-
-    // Send confirmation email
-    await sendConfirmationCodeEmail({
-      userId: newUser.id,
-      userEmail: newUser.email,
-      ctx,
-    });
-
-    // Return user data
-    return { user: newUser };
   };
 
   /**
@@ -102,48 +107,52 @@ export class UserService {
     { usernameOrEmail, password }: LoginUserInput,
     { req }: MyContext
   ): Promise<AuthFormResponse> => {
-    // Validate input, return errors (if any)
-    const errors = await validateFormInput({ usernameOrEmail, password }, loginUserSchema);
-    if (errors.length > 0) {
-      return { errors };
+    try {
+      // Validate input, return errors (if any)
+      const errors = await validateFormInput({ usernameOrEmail, password }, loginUserSchema);
+      if (errors.length > 0) {
+        return { errors };
+      }
+
+      const invalidInputErrorResponse: AuthFormResponse = {
+        errors: [
+          {
+            message: invalidLoginInputErrorMessage,
+            field: "usernameOrEmail",
+          },
+          {
+            message: invalidLoginInputErrorMessage,
+            field: "password",
+          },
+        ],
+      };
+
+      // Check if input is username or email, find user
+      const user = await (usernameOrEmail.includes("@")
+        ? User.findOne({
+            where: { email: usernameOrEmail },
+          })
+        : User.findOne({
+            where: { username: usernameOrEmail },
+          }));
+
+      if (!user) {
+        return invalidInputErrorResponse;
+      }
+
+      // Verify password input in relation to found user
+      const passwordManager = new PasswordManager();
+      const valid = await passwordManager.compare(user.password, password);
+      if (!valid) {
+        return invalidInputErrorResponse;
+      }
+
+      // Add userId to session
+      req.session.userId = user.id;
+      return { user };
+    } catch {
+      throw new InternalServerError("Error logging in user.");
     }
-
-    const invalidInputErrorResponse: AuthFormResponse = {
-      errors: [
-        {
-          message: invalidLoginInputErrorMessage,
-          field: "usernameOrEmail",
-        },
-        {
-          message: invalidLoginInputErrorMessage,
-          field: "password",
-        },
-      ],
-    };
-
-    // Check if input is username or email, find user
-    const user = await (usernameOrEmail.includes("@")
-      ? User.findOne({
-          where: { email: usernameOrEmail },
-        })
-      : User.findOne({
-          where: { username: usernameOrEmail },
-        }));
-
-    if (!user) {
-      return invalidInputErrorResponse;
-    }
-
-    // Verify password input in relation to found user
-    const passwordManager = new PasswordManager();
-    const valid = await passwordManager.compare(user.password, password);
-    if (!valid) {
-      return invalidInputErrorResponse;
-    }
-
-    // Add userId to session
-    req.session.userId = user.id;
-    return { user };
   };
 
   /**
@@ -176,9 +185,13 @@ export class UserService {
     sendNewConfirmationCodeInput: SendNewConfirmationCodeInput,
     ctx: MyContext
   ): Promise<boolean> => {
-    const { userEmail, userId } = sendNewConfirmationCodeInput;
-    const emailSent = await sendConfirmationCodeEmail({ userId, userEmail, ctx });
-    return emailSent;
+    try {
+      const { userEmail, userId } = sendNewConfirmationCodeInput;
+      const emailSent = await sendConfirmationCodeEmail({ userId, userEmail, ctx });
+      return emailSent;
+    } catch {
+      throw new InternalServerError("Error sending confirmation email");
+    }
   };
 
   /**
@@ -191,37 +204,41 @@ export class UserService {
    * @return {Promise<AuthFormResponse>} Promise that resolves to an AuthFormResponse.
    */
   confirmUserEmail = async (code: string, { redis }: MyContext): Promise<AuthFormResponse> => {
-    const prefixedToken = CONFIRM_USER_PREFIX + code;
-    const userId = await redis.get(prefixedToken);
-    if (!userId) {
-      return {
-        errors: [
-          {
-            field: "code",
-            message: invalidExpiredConfirmationCodeErrorMessage,
-          },
-        ],
-      };
-    }
+    try {
+      const prefixedToken = CONFIRM_USER_PREFIX + code;
+      const userId = await redis.get(prefixedToken);
+      if (!userId) {
+        return {
+          errors: [
+            {
+              field: "code",
+              message: invalidExpiredConfirmationCodeErrorMessage,
+            },
+          ],
+        };
+      }
 
-    const user = await User.findOneBy({ id: userId });
-    if (!user) {
-      return {
-        errors: [
-          {
-            field: "code",
-            message: userNotFoundByCodeErrorMessage,
-          },
-        ],
-      };
-    }
+      const user = await User.findOneBy({ id: userId });
+      if (!user) {
+        return {
+          errors: [
+            {
+              field: "code",
+              message: userNotFoundByCodeErrorMessage,
+            },
+          ],
+        };
+      }
 
-    Object.assign(user, { isConfirmed: true }); // Update user to confirmed
-    await redis.del(prefixedToken); // Delete token from redis database
-    const updatedUser = await user.save(); // Save updated user to database
-    return {
-      user: updatedUser, // Confirmation successful, return updated user
-    };
+      Object.assign(user, { isConfirmed: true }); // Update user to confirmed
+      await redis.del(prefixedToken); // Delete token from redis database
+      const updatedUser = await user.save(); // Save updated user to database
+      return {
+        user: updatedUser, // Confirmation successful, return updated user
+      };
+    } catch {
+      throw new InternalServerError("Failed to confirm user email");
+    }
   };
 
   /**
@@ -239,9 +256,13 @@ export class UserService {
       return true; // Email not in DB, don't let user know if not
     }
 
-    // Send Email
-    await sendResetPasswordLinkEmail({ userId: user.id, userEmail: user.email, ctx });
-    return true;
+    try {
+      // Send Email
+      await sendResetPasswordLinkEmail({ userId: user.id, userEmail: user.email, ctx });
+      return true;
+    } catch {
+      throw new InternalServerError("Error sending password reset email");
+    }
   };
 
   /**
@@ -257,49 +278,53 @@ export class UserService {
     resetUserPasswordInput: ResetUserPasswordInput,
     { redis, req }: MyContext
   ): Promise<AuthFormResponse> => {
-    const errors = await validateFormInput(resetUserPasswordInput, resetPasswordSchema);
-    if (errors.length > 0) {
-      return { errors };
+    try {
+      const errors = await validateFormInput(resetUserPasswordInput, resetPasswordSchema);
+      if (errors.length > 0) {
+        return { errors };
+      }
+
+      // Get user id from redis cache
+      const { token, password } = resetUserPasswordInput;
+      const prefixedToken = FORGOT_PASSWORD_PREFIX + token;
+      const userId = await redis.get(prefixedToken);
+      if (!userId) {
+        return {
+          errors: [
+            {
+              field: "token",
+              message: invalidExpiredConfirmationCodeErrorMessage,
+            },
+          ],
+        };
+      }
+
+      // Get user from database
+      const user = await User.findOneBy({ id: userId });
+      if (!user) {
+        return {
+          errors: [
+            {
+              field: "token",
+              message: userNotFoundByCodeErrorMessage,
+            },
+          ],
+        };
+      }
+
+      // Update user password
+      const passwordManager = new PasswordManager();
+      await User.update({ id: userId }, { password: await passwordManager.toHash(password) });
+
+      // Delete token from redis database
+      await redis.del(prefixedToken);
+
+      // Login user after successful password reset
+      req.session.userId = user.id;
+      return { user };
+    } catch {
+      throw new InternalServerError("Error resetting password");
     }
-
-    // Get user id from redis cache
-    const { token, password } = resetUserPasswordInput;
-    const prefixedToken = FORGOT_PASSWORD_PREFIX + token;
-    const userId = await redis.get(prefixedToken);
-    if (!userId) {
-      return {
-        errors: [
-          {
-            field: "token",
-            message: invalidExpiredConfirmationCodeErrorMessage,
-          },
-        ],
-      };
-    }
-
-    // Get user from database
-    const user = await User.findOneBy({ id: userId });
-    if (!user) {
-      return {
-        errors: [
-          {
-            field: "token",
-            message: userNotFoundByCodeErrorMessage,
-          },
-        ],
-      };
-    }
-
-    // Update user password
-    const passwordManager = new PasswordManager();
-    await User.update({ id: userId }, { password: await passwordManager.toHash(password) });
-
-    // Delete token from redis database
-    await redis.del(prefixedToken);
-
-    // Login user after successful password reset
-    req.session.userId = user.id;
-    return { user };
   };
 
   /**
@@ -314,43 +339,47 @@ export class UserService {
     changeUserPasswordInput: ChangeUserPasswordInput,
     { req }: MyContext
   ): Promise<AuthFormResponse> => {
-    // Double check that user is logged in
-    const { userId } = req.session;
-    if (!userId) {
-      throw new Error("Authentication failed, authorization denied.");
-    }
+    try {
+      // Double check that user is logged in
+      const { userId } = req.session;
+      if (!userId) {
+        throw new NotAuthenticatedError();
+      }
 
-    // Retrieve user from database
-    const user = await User.findOneBy({ id: userId });
-    if (!user) {
-      throw new Error("User not found.");
-    }
+      // Retrieve user from database
+      const user = await User.findOneBy({ id: userId });
+      if (!user) {
+        throw new NotFoundError();
+      }
 
-    // Validate input
-    const { oldPassword, password: newPassword } = changeUserPasswordInput;
-    const errors = await validateFormInput(changeUserPasswordInput, changeUserPasswordSchema);
-    const passwordManager = new PasswordManager();
-    const isValidPassword = await passwordManager.compare(user.password, oldPassword);
-    if (!isValidPassword) {
-      errors.push({
-        field: "oldPassword",
-        message: changePasswordOldPasswordIncorrectErrorMessage,
-      });
-    }
-    if (oldPassword === newPassword) {
-      errors.push({
-        field: "password",
-        message: changePasswordNewPasswordMustBeDifferentErrorMessage,
-      });
-    }
-    if (errors.length > 0) {
-      return { errors };
-    }
+      // Validate input
+      const { oldPassword, password: newPassword } = changeUserPasswordInput;
+      const errors = await validateFormInput(changeUserPasswordInput, changeUserPasswordSchema);
+      const passwordManager = new PasswordManager();
+      const isValidPassword = await passwordManager.compare(user.password, oldPassword);
+      if (!isValidPassword) {
+        errors.push({
+          field: "oldPassword",
+          message: changePasswordOldPasswordIncorrectErrorMessage,
+        });
+      }
+      if (oldPassword === newPassword) {
+        errors.push({
+          field: "password",
+          message: changePasswordNewPasswordMustBeDifferentErrorMessage,
+        });
+      }
+      if (errors.length > 0) {
+        return { errors };
+      }
 
-    // Update user password
-    await User.update({ id: userId }, { password: await passwordManager.toHash(newPassword) });
+      // Update user password
+      await User.update({ id: userId }, { password: await passwordManager.toHash(newPassword) });
 
-    // Return user
-    return { user };
+      // Return user
+      return { user };
+    } catch {
+      throw new InternalServerError("Failed to change user password");
+    }
   };
 }
