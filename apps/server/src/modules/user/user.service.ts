@@ -23,8 +23,7 @@ import {
   ResetUserPasswordInput,
   SendNewConfirmationCodeInput,
 } from "./inputs";
-import { sendConfirmationCodeEmail, validateRegister } from "./utils";
-import { sendResetPasswordLinkEmail } from "./utils/email";
+import { sendConfirmationCodeEmail, sendResetPasswordLinkEmail, validateRegister } from "./utils";
 
 @Service()
 /**

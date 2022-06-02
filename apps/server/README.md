@@ -14,6 +14,11 @@
   - [x] Service
   - [x] Resolver
   - [x] Tests
+- [x] changeUserPassword
+  - [x] Yup schema
+  - [x] Service
+  - [x] Resolver
+  - [x] Tests
 - [ ] logoutUser
   - [x] Service
   - [x] Resolver
@@ -22,7 +27,6 @@
   - [x] Service
   - [x] Resolver
   - [ ] Tests: Figure out how to test this with a real confirmation code
-- [x] isAuthenticated middleware
 - [ ] sendNewConfirmationEmail
   - [x] Service
   - [x] Resolver
@@ -36,18 +40,15 @@
   - [x] Service
   - [x] Resolver
   - [ ] Tests: Figure out how to test this with a real reset code
-- [x] changeUserPassword
-  - [x] Yup schema
-  - [x] Service
-  - [x] Resolver
-  - [x] Tests
+- [x] isAuthenticated middleware
 - [x] Create regulated error responses
 - [x] Implement custom server error responses
 - [x] Add custom error handling throughout the app
 - [x] add field resolver for user email that only allows the current user to see their own email
 - [x] user dataloader
 - [x] create email utils for user module
-- [ ] create email templates for user module email utils
+- [x] create email templates for user module email utils
+- [ ] update build process so we can include our email templates
 - [ ] rate limiting
 - [ ] multi-session
   - [ ] add sessions to redis (for multi-session tracking)

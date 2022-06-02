@@ -1,7 +1,7 @@
-import { SendMailOptions } from "nodemailer";
 import { v4 as uuidV4 } from "uuid";
 import { FORGOT_PASSWORD_PREFIX, FRONTEND_URL } from "../../../lib/constants";
 import { createConfirmationCode, sendEmail } from "../../../lib/utils";
+import { SendEmailParams } from "../../../lib/utils/send-email";
 import { MyContext } from "../../../types";
 
 export interface ISendUserAuthEmailOptions {
@@ -23,14 +23,18 @@ export const sendConfirmationCodeEmail = async ({
   try {
     // Create new confirmation code
     const confirmationCode = await createConfirmationCode(userId, ctx);
-    // TODO: Update this to use the production email service in the future
-    // TODO: Update this to user a different email template in the future
-    const mailOptions: SendMailOptions = {
-      from: '"Fred Foo 👻" <foo@example.com>',
-      to: userEmail,
-      subject: "Confirmation Code ✔",
-      text: `CODE: ${confirmationCode}`,
-      html: `<div><span>CODE: <b>${confirmationCode}</b></span></div>`,
+    console.log("confirmationCode", confirmationCode);
+
+    // Send email params
+    const mailOptions: SendEmailParams = {
+      template: "confirmation-code",
+      options: {
+        to: userEmail,
+      },
+      locals: {
+        code: confirmationCode,
+        username: userEmail,
+      },
     };
 
     // Send email
@@ -53,6 +57,7 @@ export const sendResetPasswordLinkEmail = async ({
 }: ISendUserAuthEmailOptions): Promise<void> => {
   const token = uuidV4().split("-").join(""); // Generate new token
   const prefixedToken = FORGOT_PASSWORD_PREFIX + token;
+
   // Add token to redis
   await redis.set(
     prefixedToken,
@@ -61,16 +66,16 @@ export const sendResetPasswordLinkEmail = async ({
     1000 * 60 * 60 * 24 * 1 // 1 day
   );
 
-  // TODO: Update this to use the production email service in the future
-  // TODO: Update this to user a different email template in the future
-  const resetPasswordHref = `${FRONTEND_URL}/reset-password?token=${token}`;
-  const resetPasswordLink = `<a href="${resetPasswordHref}">Reset Password</a>`;
-  const mailOptions: SendMailOptions = {
-    from: '"Fred Foo 👻" <foo@example.com>',
-    to: userEmail,
-    subject: "Confirmation Code ✔",
-    text: `RESET PASSWORD: ${resetPasswordHref}`,
-    html: `<div><span>RESET PASSWORD: ${resetPasswordLink}</span></div>`,
+  // const resetPasswordHref = `${FRONTEND_URL}/reset-password?token=${token}`;
+  const mailOptions: SendEmailParams = {
+    template: "reset-password",
+    options: {
+      to: userEmail,
+    },
+    locals: {
+      frontendUrl: FRONTEND_URL,
+      token,
+    },
   };
 
   // Send email

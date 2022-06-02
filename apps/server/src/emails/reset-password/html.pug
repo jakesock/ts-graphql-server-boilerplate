@@ -1,0 +1,6 @@
+body
+  h1 Reset Password
+  p Hi #{username}!
+  p Here is the link to reset your password:
+  - const url = `${frontendUrl}/reset-password?token=${token}`
+  a(href=url, target="_blank", rel="noopener noreferrer") Reset Password
