@@ -49,6 +49,7 @@
 - [x] create email utils for user module
 - [x] create email templates for user module email utils
 - [ ] update build process so we can include our email templates
+- [ ] add better/more robust logging
 - [ ] rate limiting
 - [ ] multi-session
   - [ ] add sessions to redis (for multi-session tracking)

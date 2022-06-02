@@ -23,7 +23,6 @@ export const sendConfirmationCodeEmail = async ({
   try {
     // Create new confirmation code
     const confirmationCode = await createConfirmationCode(userId, ctx);
-    console.log("confirmationCode", confirmationCode);
 
     // Send email params
     const mailOptions: SendEmailParams = {

@@ -51,7 +51,7 @@ export async function sendEmail({ options, template, locals }: SendEmailParams):
   try {
     const transport = await createTransport();
     const root = path.join(__dirname, "../../emails");
-    console.log("root", root);
+
     const email = new Email({
       send: true,
       preview: !PROD,
@@ -71,7 +71,6 @@ export async function sendEmail({ options, template, locals }: SendEmailParams):
       },
       locals,
     })) as SMTPTransport.SentMessageInfo;
-    console.log("info", info);
 
     if (!PROD) {
       console.log("Message sent: %s", info.messageId);
