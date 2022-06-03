@@ -13,8 +13,8 @@
     "test:watch": "jest --watch",
     "check:lint": "yarn run lint",
     "check:format": "prettier --check .",
-    "check:type": "tsc --pretty --noEmit",
-    "check:all": "yarn run check:format && yarn run check:lint && yarn check:types"
+    "check:types": "tsc --pretty --noEmit",
+    "check:all": "yarn run check:format && yarn run check:lint && yarn check:types && yarn run test && yarn run build"
   },
   "dependencies": {
     "yup": "^0.32.11"

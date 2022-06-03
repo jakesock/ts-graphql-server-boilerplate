@@ -4,8 +4,8 @@
 
 - [ ] Add logging
 - [ ] Update CI process
-  - [ ] Only run tests on changed packages/apps if their source files have changed
-  - [ ] Add a test script to run all tests
+  - [x] Only run tests on changed packages/apps if their source files have changed
+  - [x] Add a test script to run all tests
   - [ ] create build pipeline to build apps and their package dependencies
 - [ ] Update docs
   - [ ] @monorepo/server docs

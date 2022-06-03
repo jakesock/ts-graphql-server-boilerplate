@@ -1,5 +1,6 @@
 {
-  "**/*.{ts,tsx,js,jsx,json,md}": ["prettier --write", "prettier --check"],
-  "apps/**/*.{js,ts,jsx,tsx}": ["eslint --fix"],
-  "packages/**/*.{js,ts,jsx,tsx}": ["eslint --fix"]
+  "**/*.{ts,tsx,js,jsx,json,md,pug}": ["prettier --write", "prettier --check"],
+  "apps/server/src/**/*.{ts,tsx,js,jsx,json}": ["server:check:all"],
+  "packages/errors/src/**/*.{ts,tsx,js,jsx,json}": ["errors:check:all"],
+  "packages/yup-schemas/src/**/*.{ts,tsx,js,jsx,json}": ["yup-schemas:check:all"]
 }

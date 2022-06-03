@@ -9,9 +9,26 @@
   "scripts": {
     "commit": "cz",
     "commit:signed": "cz",
+    "prepare": "husky install",
+    "test": "yarn run yup-schemas:test && yarn run errors:test && yarn run server:test",
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",
     "check:format": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md}\"",
-    "prepare": "husky install"
+    "check:all": "yarn run yup-schemas:check:all && yarn run errors:check:all && yarn run server:check:all",
+    "server:build": "yarn workspace @monorepo/server run build",
+    "server:test": "yarn workspace @monorepo/server run test",
+    "server:lint": "yarn workspace @monorepo/server run lint",
+    "server:format": "yarn workspace @monorepo/server run format",
+    "server:check:all": "yarn workspace @monorepo/server run check:all",
+    "errors:build": "yarn workspace @monorepo/errors run build",
+    "errors:test": "yarn workspace @monorepo/errors run test",
+    "errors:lint": "yarn workspace @monorepo/errors run lint",
+    "errors:format": "yarn workspace @monorepo/errors run format",
+    "errors:check:all": "yarn workspace @monorepo/errors run check:all",
+    "yup-schemas:build": "yarn workspace @monorepo/yup-schemas run build",
+    "yup-schemas:test": "yarn workspace @monorepo/yup-schemas run test",
+    "yup-schemas:lint": "yarn workspace @monorepo/yup-schemas run lint",
+    "yup-schemas:format": "yarn workspace @monorepo/yup-schemas run format",
+    "yup-schemas:check:all": "yarn workspace @monorepo/yup-schemas run check:all"
   },
   "devDependencies": {
     "commitizen": "^4.2.4",

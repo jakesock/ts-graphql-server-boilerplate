@@ -12,8 +12,8 @@
     "test": "echo \"@monorepo/errors: No tests\"",
     "check:lint": "yarn run lint",
     "check:format": "prettier --check .",
-    "check:type": "tsc --pretty --noEmit",
-    "check:all": "yarn run check:format && yarn run check:lint && yarn check:types"
+    "check:types": "tsc --pretty --noEmit",
+    "check:all": "yarn run check:format && yarn run check:lint && yarn run check:types && yarn run test && yarn run build"
   },
   "devDependencies": {
     "@monorepo/config": "workspace:*",
