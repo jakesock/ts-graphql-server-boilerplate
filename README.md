@@ -2,7 +2,7 @@
 
 ## TODO:
 
-- [ ] Add logging
+- [ ] Add logging capabilities (winston, no need to print logs into files for now as this is just a boilerplate)
 - [ ] Update docs
   - [ ] @monorepo/server docs
   - [ ] @monorepo/config docs
