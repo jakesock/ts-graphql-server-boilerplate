@@ -3,10 +3,10 @@
 ## TODO:
 
 - [ ] Add logging
-- [ ] Update CI process
+- [x] Update CI process
   - [x] Only run tests on changed packages/apps if their source files have changed
   - [x] Add a test script to run all tests
-  - [ ] create build pipeline to build apps and their package dependencies
+  - [x] create build pipeline to build apps and their package dependencies
 - [ ] Update docs
   - [ ] @monorepo/server docs
   - [ ] @monorepo/config docs

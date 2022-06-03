@@ -7,9 +7,10 @@
     "packages/*"
   ],
   "scripts": {
-    "commit": "cz",
-    "commit:signed": "cz",
     "prepare": "husky install",
+    "commit": "cz",
+    "commit:signed": "cz -S",
+    "build": "yarn workspaces foreach -ptvR --from '{@monorepo/server,@monorepo/yup-schemas,@monorepo/errors}' run build && yarn install",
     "test": "yarn run yup-schemas:test && yarn run errors:test && yarn run server:test",
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",
     "check:format": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md}\"",
