@@ -48,11 +48,11 @@
 - [x] user dataloader
 - [x] create email utils for user module
 - [x] create email templates for user module email utils
-- [ ] update build process so we can include our email templates
-- [ ] add better/more robust logging
+- [x] update build process so we can include our email templates
 - [ ] rate limiting
 - [ ] multi-session
   - [ ] add sessions to redis (for multi-session tracking)
   - [ ] remove all sessions for a user when they log out or reset their password
 - [ ] implement the ability to lock account (for brute force password attempts or too many reset attempts, etc.)
+- [ ] ? add better/more robust logging (e.g. winston, not necessary as this is just a boilerplate, but might be nice to have limited logging as a starting point for other projects)
 - [ ] dockerize application
