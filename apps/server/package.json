@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "author": "Jake Thomas",
   "description": "The server for the AirBnB clone",
-  "main": "dist/src/index.js",
+  "main": "dist/index.js",
   "scripts": {
     "start": "NODE_ENV=production node dist/index.js",
     "dev": "NODE_ENV=development nodemon --delay 500ms dist/index.js",
@@ -15,7 +15,7 @@
     "format": "prettier --write .",
     "check:format": "prettier --check .",
     "check:types": "tsc --pretty --noEmit",
-    "check:all": "yarn check:format && yarn lint && yarn check:types && yarn test && yarn build",
+    "check:all": "yarn check:format && yarn lint && yarn check:types && yarn test",
     "typeorm:cli": "../../node_modules/typeorm cli -f ./src/lib/config/orm.config.ts",
     "table:create": "yarn run typeorm:cli -- migration:run",
     "table:drop": "yarn run typeorm:cli -- migration:revert",

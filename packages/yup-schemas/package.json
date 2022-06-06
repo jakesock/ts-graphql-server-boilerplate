@@ -2,8 +2,8 @@
   "name": "@monorepo/yup-schemas",
   "version": "1.0.0",
   "description": "Yup schemas for monorepo",
-  "main": "dist/src/index.js",
-  "types": "dist/src/index.d.ts",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "license": "MIT",
   "scripts": {
     "build": "rimraf ./dist && tsc",
@@ -14,7 +14,7 @@
     "check:lint": "yarn run lint",
     "check:format": "prettier --check .",
     "check:types": "tsc --pretty --noEmit",
-    "check:all": "yarn run check:format && yarn run check:lint && yarn check:types && yarn run test && yarn run build"
+    "check:all": "yarn run check:format && yarn run check:lint && yarn check:types && yarn run test"
   },
   "dependencies": {
     "yup": "^0.32.11"
