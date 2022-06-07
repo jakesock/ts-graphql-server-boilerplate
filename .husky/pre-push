@@ -1,26 +1,26 @@
 #!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
 
-echo "\n🔥 Running pre-push hook...\n"
+echo "\n🔥 Running pre-push hook..."
 
 # Check code style
-echo "\n✨ Checking code style...\n"
+echo "\n✨ Checking code style..."
 yarn check:format
 
 # Lint code
-echo "\n🔎 Linting code...\n"
+echo "\n🔎 Linting code..."
 yarn check:lint
 
 # Check typescript types
-echo "\n🤓 Checking typescript types...\n"
+echo "\n🤓 Checking typescript types..."
 yarn check:types
 
 # Test all workspaces
-echo "\n🧪 Running tests...\n"
+echo "\n🧪 Running tests..."
 yarn test
 
 # Build all workspaces
-echo "\n🚧 Checking builds...\n"
+echo "\n🚧 Checking builds..."
 yarn build
 
-echo -e "\n🎉 Done running pre-push hook! Pushing your commits now!\n"
+echo "\n🎉 Done running pre-push hook! Pushing your commits now!\n"

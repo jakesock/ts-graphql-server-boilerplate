@@ -1,13 +1,14 @@
 #!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
 
-echo "\n🔥 Running pre-commit hook...\n"
+echo "\n🔥 Running pre-commit hook..."
 
-echo "\n✨ Checking code style...\n"
+# Run lint-staged (prettier, eslint)
+echo "\n✨ Checking code style and linting..."
 npx lint-staged -v
 
 # Check typescript types
-echo "\n🤓 Checking typescript types...\n"
+echo "\n🤓 Checking typescript types..."
 yarn check:types
 
 echo "\n🎉 Pre-commit hook succesful! Commiting your changes now.\n"
