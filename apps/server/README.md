@@ -5,7 +5,7 @@
 - [x] registerUser
   - [x] Service
   - [x] Resolver
-  - [x] Tests: Test errors
+  - [x] Tests
 - [x] getCurrentUser
   - [x] Service
   - [x] Resolver
@@ -31,15 +31,15 @@
   - [x] Service
   - [x] Resolver
   - [x] Tests
-- [ ] confirmUserEmail
+- [x] confirmUserEmail
   - [x] Service
   - [x] Resolver
-  - [ ] Tests: Figure out how to test this with a real confirmation code
-- [ ] resetUserPassword
+  - [x] Tests
+- [x] resetUserPassword
   - [x] Yup schema
   - [x] Service
   - [x] Resolver
-  - [ ] Tests: Figure out how to test this with a real reset code
+  - [x] Tests
 - [x] isAuthenticated middleware
 - [x] Create regulated error responses
 - [x] Implement custom server error responses
@@ -53,4 +53,5 @@
   - [x] Implement rate limiting middleware for queries/mutations
   - [x] Implement server-wide rate limiting
 - [x] add better/more robust logging (e.g. winston, not necessary as this is just a boilerplate, but might be nice to have limited logging as a starting point for other projects)
+- [ ] add missing utils tests
 - [ ] dockerize application
