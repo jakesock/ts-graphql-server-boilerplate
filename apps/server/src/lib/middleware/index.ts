@@ -1,1 +1,2 @@
-export { isAuthenticated } from "./is-authenticated";
+export { IsAuthenticated } from "./is-authenticated";
+export { RateLimit } from "./rate-limit";

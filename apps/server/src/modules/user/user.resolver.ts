@@ -10,7 +10,7 @@ import {
 } from "type-graphql";
 import { Service } from "typedi";
 import { User } from "../../entity";
-import { isAuthenticated } from "../../lib/middleware";
+import { IsAuthenticated, RateLimit } from "../../lib/middleware";
 import { AuthFormResponse, MyContext } from "../../types";
 import {
   ChangeUserPasswordInput,
@@ -65,6 +65,13 @@ export class UserResolver {
    * @return {Promise<AuthFormResponse>} Promise that resolves to an AuthFormResponse.
    */
   @Mutation(() => AuthFormResponse)
+  @RateLimit({
+    max: 5, // 5 requests
+    window: 60 * 1, // 1 minute
+    limitByVariables: true, // Only limit if the user is using the same input over and over.
+    errorMessage:
+      "Seems like you're trying to register to often! Please try again later or with different values.",
+  })
   async registerUser(
     @Arg("registerUserInput") registerUserInput: RegisterUserInput,
     @Ctx() ctx: MyContext
@@ -159,7 +166,7 @@ export class UserResolver {
    * @return {Promise<AuthFormResponse>} Promise that resolves to an AuthFormResponse.
    */
   @Mutation(() => AuthFormResponse)
-  @UseMiddleware(isAuthenticated)
+  @UseMiddleware(IsAuthenticated)
   async changeUserPassword(
     @Arg("changeUserPasswordInput") changeUserPasswordInput: ChangeUserPasswordInput,
     @Ctx() ctx: MyContext

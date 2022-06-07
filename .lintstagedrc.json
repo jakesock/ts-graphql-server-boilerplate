@@ -1,6 +1,6 @@
 {
   "**/*.{ts,tsx,js,jsx,json,md,pug}": ["prettier --write", "prettier --check"],
-  "apps/server/src/**/*.{ts,tsx,js,jsx,json}": ["yarn server:check:all"],
-  "packages/errors/src/**/*.{ts,tsx,js,jsx,json}": ["yarn errors:check:all"],
-  "packages/yup-schemas/src/**/*.{ts,tsx,js,jsx,json}": ["yarn yup-schemas:check:all"]
+  "apps/server/src/**/*.{ts,tsx,js,jsx,json}": ["eslint --fix"],
+  "packages/errors/src/**/*.{ts,tsx,js,jsx,json}": ["eslint --fix"],
+  "packages/yup-schemas/src/**/*.{ts,tsx,js,jsx,json}": ["eslint --fix"]
 }

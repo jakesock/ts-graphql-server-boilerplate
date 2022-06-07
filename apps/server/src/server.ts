@@ -6,11 +6,12 @@ import {
 import { ApolloServer, ExpressContext } from "apollo-server-express";
 import cors from "cors";
 import express, { Express } from "express";
+import rateLimit from "express-rate-limit";
 import session from "express-session";
 import { fieldExtensionsEstimator, simpleEstimator } from "graphql-query-complexity";
 import { createComplexityPlugin } from "graphql-query-complexity-apollo-plugin";
 import "reflect-metadata";
-import { corsConfig, redisClient, sessionConfig } from "./lib/config";
+import { corsConfig, rateLimitConfig, redisClient, sessionConfig } from "./lib/config";
 import { PROD } from "./lib/constants";
 import { createUserLoader } from "./lib/loaders";
 import { buildSchema } from "./lib/utils";
@@ -35,6 +36,7 @@ export async function createApolloExpressServer(): CreateApolloExpressServerRetu
     // Apply express middlewares
     app.use(cors(corsConfig));
     app.use(session(sessionConfig));
+    app.use(rateLimit(rateLimitConfig));
 
     // Define Apollo Server and GraphQL Schema
     const schema = await buildSchema();

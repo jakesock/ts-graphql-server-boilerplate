@@ -1,17 +1,18 @@
-import { SerializedErrors, ServerErrorMessage, StatusCodes } from "../types";
+import { SerializedErrors, StatusCodes } from "../types";
 import { CustomError } from "./custom-error";
 
 /**
- * Rate Limit Exceed Error (403)
+ * Rate Limit Exceed Error (429)
  */
 export class RateLimitExceededError extends CustomError {
-  statusCode = StatusCodes.FORBIDDEN;
+  statusCode = StatusCodes.RATE_LIMIT_EXCEEDED;
 
   /**
    * Set error message and prototype
+   * @param {string} message - Error message.
    */
-  constructor() {
-    super(ServerErrorMessage.RATE_LIMIT_EXCEEDED);
+  constructor(message: string) {
+    super(message);
 
     Object.setPrototypeOf(this, RateLimitExceededError.prototype);
   }
@@ -21,6 +22,6 @@ export class RateLimitExceededError extends CustomError {
    * @return {SerializedErrors} An array of formatted errors.
    */
   serializeErrors(): SerializedErrors {
-    return [{ message: ServerErrorMessage.RATE_LIMIT_EXCEEDED, status: this.statusCode }];
+    return [{ message: this.message, status: this.statusCode }];
   }
 }

@@ -49,10 +49,8 @@
 - [x] create email utils for user module
 - [x] create email templates for user module email utils
 - [x] update build process so we can include our email templates
-- [ ] rate limiting
-- [ ] multi-session
-  - [ ] add sessions to redis (for multi-session tracking)
-  - [ ] remove all sessions for a user when they log out or reset their password
-- [ ] implement the ability to lock account (for brute force password attempts or too many reset attempts, etc.)
+- [x] rate limiting
+  - [x] Implement rate limiting middleware for queries/mutations
+  - [x] Implement server-wide rate limiting
 - [ ] ? add better/more robust logging (e.g. winston, not necessary as this is just a boilerplate, but might be nice to have limited logging as a starting point for other projects)
 - [ ] dockerize application
