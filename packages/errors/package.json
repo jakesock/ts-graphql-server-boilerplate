@@ -10,8 +10,8 @@
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx --fix",
     "format": "prettier --write .",
     "test": "echo \"@monorepo/errors: No tests\"",
-    "check:lint": "yarn run lint",
     "check:format": "prettier --check .",
+    "check:lint": "eslint .",
     "check:types": "tsc --pretty --noEmit",
     "check:all": "yarn run check:format && yarn run check:lint && yarn run check:types"
   },

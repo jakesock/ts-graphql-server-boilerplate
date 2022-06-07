@@ -1,6 +1,26 @@
 #!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
 
-yarn workspaces foreach run check:all
+echo -e "\n🔥 Running pre-push hook...\n"
+
+# Check code style
+echo -e "\n Checking code style...\n"
+yarn check:format
+
+# Lint code
+echo -e "\n Linting code...\n"
+yarn check:lint
+
+# Check typescript types
+echo -e "\n Checking typescript types...\n"
+yarn check:types
+
+# Test all workspaces
+echo -e "\n Running tests...\n"
 yarn test
+
+# Build all workspaces
+echo -e "\n Checking builds...\n"
 yarn build
+
+echo -e "\n🔥 Done running pre-push hook. Pushing your commits now!\n"

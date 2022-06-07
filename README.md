@@ -11,9 +11,10 @@
   - [ ] @monorepo/errors docs
   - [ ] update root README.md
 - [ ] Update CI process
-  - [x] Only run tests on changed packages/apps if their source files have changed
   - [x] Add a test script to run all tests
   - [x] create build pipeline to build apps and their package dependencies
+  - [ ] add verbose pre-push hook (messages to console, check lint, check format, check types, run tests, check build)
+  - [ ] add messages to console on pre-commit
   - [ ] commitlint
   - [ ] travisci/circleci
   - [ ] github actions
