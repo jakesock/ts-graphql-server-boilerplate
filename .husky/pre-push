@@ -14,7 +14,7 @@ yarn check:format ||
 
 # Lint code
 echo "\n🔎 Linting code..."
-yarn check:lint
+yarn check:lint ||
 (
   echo '❌ ESlint Check Failed. ❌
           Make the required changes listed above, add changes to git and try to commit again.'
@@ -23,7 +23,7 @@ yarn check:lint
 
 # Check typescript types
 echo "\n🤓 Checking typescript types..."
-yarn check:types
+yarn check:types ||
 (
   echo '❌ Type Check Failed. ❌
             Make the required changes listed above, add changes to git and try to commit again.'
@@ -32,11 +32,16 @@ yarn check:types
 
 # Test all workspaces
 echo "\n🧪 Running tests..."
-yarn test
+yarn test ||
+(
+  echo '❌ Testing Failed. ❌
+            View the errors above to see why your tests failed.'
+  false;
+)
 
 # Build all workspaces
 echo "\n🚧 Checking builds..."
-yarn build
+yarn build ||
 (
   echo '❌ Build Failed. ❌
             View the errors above to see why your build failed.'
