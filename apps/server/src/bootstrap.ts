@@ -1,9 +1,6 @@
-// eslint-disable-next-line eslint-comments/disable-enable-pair
-/* eslint-disable no-console */
-
 import { InternalServerError } from "@monorepo/errors";
 import { PROD, SERVER_PORT } from "./lib/constants";
-import { initializeDatabase } from "./lib/utils";
+import { initializeDatabase, logger } from "./lib/utils";
 import { createApolloExpressServer } from "./server";
 
 /**
@@ -30,14 +27,15 @@ export async function bootstrap(): Promise<void> {
     // Start Express Server on port "SERVER_PORT"
     app.listen(SERVER_PORT, () => {
       if (PROD) {
-        console.log(`Server started on port ${SERVER_PORT}.`);
+        logger.info(`Server started on port ${SERVER_PORT}.`);
       } else {
-        console.log(
+        logger.info(
           `Server started on port ${SERVER_PORT}! Playground available at http://localhost:${SERVER_PORT}${apolloServer.graphqlPath}`
         );
       }
     });
-  } catch {
+  } catch (error) {
+    logger.error("Server failed to start: %s", error);
     throw new InternalServerError("Error bootstrapping server");
   }
 }

@@ -14,7 +14,7 @@ import "reflect-metadata";
 import { corsConfig, rateLimitConfig, redisClient, sessionConfig } from "./lib/config";
 import { PROD } from "./lib/constants";
 import { createUserLoader } from "./lib/loaders";
-import { buildSchema } from "./lib/utils";
+import { buildSchema, logger } from "./lib/utils";
 
 type CreateApolloExpressServerReturnType = Promise<{
   app: Express;
@@ -56,8 +56,7 @@ export async function createApolloExpressServer(): CreateApolloExpressServerRetu
           estimators: [fieldExtensionsEstimator(), simpleEstimator({ defaultComplexity: 1 })],
           maximumComplexity: 1000,
           onComplete: (complexity) => {
-            // eslint-disable-next-line no-console
-            console.log("Query Complexity:", complexity);
+            logger.info("Query Complexity: %d", complexity);
           },
         }),
         PROD
@@ -87,7 +86,8 @@ export async function createApolloExpressServer(): CreateApolloExpressServerRetu
       app,
       apolloServer,
     };
-  } catch {
-    throw new InternalServerError("Error buiding GraphQL schema");
+  } catch (error) {
+    logger.error("Error creating Apollo Server and Express App: %s", error);
+    throw new InternalServerError("Error building GraphQL schema");
   }
 }

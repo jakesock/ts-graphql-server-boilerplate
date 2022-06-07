@@ -8,6 +8,7 @@ import path from "node:path";
 import nodemailer, { SendMailOptions } from "nodemailer";
 import SMTPTransport from "nodemailer/lib/smtp-transport";
 import { PROD } from "../constants";
+import { logger } from "./logger";
 
 export interface ILocals {
   [key: string]: unknown;
@@ -73,12 +74,12 @@ export async function sendEmail({ options, template, locals }: SendEmailParams):
     })) as SMTPTransport.SentMessageInfo;
 
     if (!PROD) {
-      console.log("Message sent: %s", info.messageId);
+      logger.info("Message sent: %s", info.messageId);
       // Preview only available when sending through an Ethereal account
-      console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
+      logger.info("Preview URL: %s", nodemailer.getTestMessageUrl(info));
     }
   } catch (error) {
-    console.error("EMAIL ERROR:", error);
+    logger.error("EMAIL ERROR: %s", error);
     throw new InternalServerError("Error sending email");
   }
 }

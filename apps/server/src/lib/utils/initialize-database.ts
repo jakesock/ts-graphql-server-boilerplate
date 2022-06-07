@@ -1,8 +1,6 @@
-/* eslint-disable eslint-comments/disable-enable-pair */
-/* eslint-disable no-console */
-
 import { DatabaseConnectionError } from "@monorepo/errors";
 import { AppDataSource } from "../config";
+import { logger } from "./logger";
 
 /**
  * Asynchronous function that creates our database connection.
@@ -10,9 +8,9 @@ import { AppDataSource } from "../config";
 export const initializeDatabase = async (): Promise<void> => {
   try {
     await AppDataSource.initialize();
-    console.log("Database successfully initialized!");
+    logger.info("Database connection initialized");
   } catch (error) {
-    console.error(error);
+    logger.error("Database Connection Error: %s", error);
     throw new DatabaseConnectionError();
   }
 };

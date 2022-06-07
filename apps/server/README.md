@@ -52,5 +52,5 @@
 - [x] rate limiting
   - [x] Implement rate limiting middleware for queries/mutations
   - [x] Implement server-wide rate limiting
-- [ ] MAYBE: add better/more robust logging (e.g. winston, not necessary as this is just a boilerplate, but might be nice to have limited logging as a starting point for other projects)
+- [x] add better/more robust logging (e.g. winston, not necessary as this is just a boilerplate, but might be nice to have limited logging as a starting point for other projects)
 - [ ] dockerize application
