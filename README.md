@@ -2,7 +2,7 @@
 
 ## TODO:
 
-- [ ] Add logging capabilities (winston, no need to print logs into files for now as this is just a boilerplate)
+- [ ] Add logging capabilities (winston, no need to print logs into files or a db for now as this is just a boilerplate)
 - [ ] Update docs
   - [ ] @monorepo/server docs
   - [ ] @monorepo/config docs
@@ -13,8 +13,9 @@
 - [ ] Update CI process
   - [x] Add a test script to run all tests
   - [x] create build pipeline to build apps and their package dependencies
-  - [ ] add verbose pre-push hook (messages to console, check lint, check format, check types, run tests, check build)
-  - [ ] add messages to console on pre-commit
-  - [ ] commitlint
-  - [ ] travisci/circleci
+  - [x] add verbose pre-push hook (messages to console, check lint, check format, check types, run tests, check build)
+  - [x] add messages to console on pre-commit
+  - [x] commitlint
+  - [ ] check branch on pre-push
+  - [ ] ? circleci
   - [ ] github actions
