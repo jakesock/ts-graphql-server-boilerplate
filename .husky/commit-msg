@@ -1,4 +1,7 @@
 #!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
 
+echo "🔐 Checking your commit message..."
 npx --no-install commitlint --color --edit
+
+echo "\n💖 Commit message looks good, commiting your code now!\n"
