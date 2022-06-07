@@ -5,10 +5,21 @@ echo "\n🔥 Running pre-commit hook..."
 
 # Run lint-staged (prettier, eslint)
 echo "\n✨ Checking code style and linting..."
-npx lint-staged -v
+npx lint-staged -v ||
+(
+  echo '❌ Prettier/ESLint Check Failed. ❌
+            Make the required changes listed above, add changes to git and try to commit again.'
+  false;
+)
 
 # Check typescript types
 echo "\n🤓 Checking typescript types..."
-yarn check:types
+yarn check:types ||
+(
+  echo '❌ Type Check Failed. ❌
+            Make the required changes listed above, add changes to git and try to commit again.'
+  false;
+)
+
 
 echo "\n🎉 Pre-commit hook succesful! Commiting your changes now.\n"

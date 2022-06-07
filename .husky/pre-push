@@ -5,15 +5,30 @@ echo "\n🔥 Running pre-push hook..."
 
 # Check code style
 echo "\n✨ Checking code style..."
-yarn check:format
+yarn check:format ||
+(
+  echo '❌ Prettier Check Failed. ❌
+          Run yarn format, add changes to git and try to commit again.';
+  false;
+)
 
 # Lint code
 echo "\n🔎 Linting code..."
 yarn check:lint
+(
+  echo '❌ ESlint Check Failed. ❌
+          Make the required changes listed above, add changes to git and try to commit again.'
+  false;
+)
 
 # Check typescript types
 echo "\n🤓 Checking typescript types..."
 yarn check:types
+(
+  echo '❌ Type Check Failed. ❌
+            Make the required changes listed above, add changes to git and try to commit again.'
+  false;
+)
 
 # Test all workspaces
 echo "\n🧪 Running tests..."
@@ -22,5 +37,10 @@ yarn test
 # Build all workspaces
 echo "\n🚧 Checking builds..."
 yarn build
+(
+  echo '❌ Build Failed. ❌
+            View the errors above to see why your build failed.'
+  false;
+)
 
 echo "\n🎉 Done running pre-push hook! Pushing your commits now!\n"
