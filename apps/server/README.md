@@ -19,22 +19,22 @@
   - [x] Service
   - [x] Resolver
   - [x] Tests
-- [ ] logoutUser
+- [x] logoutUser
   - [x] Service
   - [x] Resolver
-  - [ ] Tests: Figure out how to test this with a real session
+  - [x] Tests
+- [x] sendNewConfirmationEmail
+  - [x] Service
+  - [x] Resolver
+  - [x] Tests
+- [x] sendPasswordResetEmail
+  - [x] Service
+  - [x] Resolver
+  - [x] Tests
 - [ ] confirmUserEmail
   - [x] Service
   - [x] Resolver
   - [ ] Tests: Figure out how to test this with a real confirmation code
-- [ ] sendNewConfirmationEmail
-  - [x] Service
-  - [x] Resolver
-  - [ ] Tests: Figure out how to test email sending with codes
-- [ ] sendPasswordResetEmail
-  - [x] Service
-  - [x] Resolver
-  - [ ] Tests: Figure out how to test email sending with codes
 - [ ] resetUserPassword
   - [x] Yup schema
   - [x] Service
@@ -52,5 +52,5 @@
 - [x] rate limiting
   - [x] Implement rate limiting middleware for queries/mutations
   - [x] Implement server-wide rate limiting
-- [ ] ? add better/more robust logging (e.g. winston, not necessary as this is just a boilerplate, but might be nice to have limited logging as a starting point for other projects)
+- [ ] MAYBE: add better/more robust logging (e.g. winston, not necessary as this is just a boilerplate, but might be nice to have limited logging as a starting point for other projects)
 - [ ] dockerize application
