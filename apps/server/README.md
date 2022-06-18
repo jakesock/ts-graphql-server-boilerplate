@@ -1,55 +1,11 @@
 # @monorepo/server
 
-## TODO:
+An Express GraphQL server boilerplate that contains boilerplate logic for authentication/authorization.
 
-- [x] registerUser
-  - [x] Service
-  - [x] Resolver
-  - [x] Tests
-- [x] getCurrentUser
-  - [x] Service
-  - [x] Resolver
-  - [x] Tests
-- [x] loginUser
-  - [x] Service
-  - [x] Resolver
-  - [x] Tests
-- [x] changeUserPassword
-  - [x] Yup schema
-  - [x] Service
-  - [x] Resolver
-  - [x] Tests
-- [x] logoutUser
-  - [x] Service
-  - [x] Resolver
-  - [x] Tests
-- [x] sendNewConfirmationEmail
-  - [x] Service
-  - [x] Resolver
-  - [x] Tests
-- [x] sendPasswordResetEmail
-  - [x] Service
-  - [x] Resolver
-  - [x] Tests
-- [x] confirmUserEmail
-  - [x] Service
-  - [x] Resolver
-  - [x] Tests
-- [x] resetUserPassword
-  - [x] Yup schema
-  - [x] Service
-  - [x] Resolver
-  - [x] Tests
-- [x] isAuthenticated middleware
-- [x] Create regulated error responses
-- [x] Implement custom server error responses
-- [x] Add custom error handling throughout the app
-- [x] add field resolver for user email that only allows the current user to see their own email
-- [x] user dataloader
-- [x] create email utils for user module
-- [x] create email templates for user module email utils
-- [x] update build process so we can include our email templates
-- [x] rate limiting
-  - [x] Implement rate limiting middleware for queries/mutations
-  - [x] Implement server-wide rate limiting
-- [x] add better/more robust logging (e.g. winston, not necessary as this is just a boilerplate, but might be nice to have limited logging as a starting point for other projects)
+## Installation and Usage
+
+Visit the root README.md file for installation and usage instructions.
+
+## Notes
+
+The server uses yarn workspaces to manage local package dependencies. In the package.json file under dependencies and dev depencencies, you can see the packages that are used by the server. To install new packages, add the name given to them in their respective package.json files along with their version using workspaces:VERSION_NUMBER(\* for latest).

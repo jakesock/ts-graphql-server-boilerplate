@@ -10,6 +10,8 @@ A boilerplate monorepo containing a GraphQL Auth Server using Typescript, TypeOR
 - GraphQL query complexity limit
 - Input validation and regulated error handling/responses
 - Logging using winston (barebones implementation logging to console)
+- Testing with jest
+- Local CI and style-enforcement pipeline using husky, lintstaged, commitizen, commitlint, eslint, and prettier.
 
 ## Packages and Apps
 
@@ -47,13 +49,19 @@ yarn workspaces focus @monorepo/errors @monorepo/yup-schemas @monorepo/config @m
   yarn run errors:build && yarn run yup-schemas:build
 ```
 
-4. Install rest of dependencies
+5. Install rest of dependencies
 
 ```
 yarn install
 ```
 
-5. Start the PostgreSQL server on your local machine and create a dev and test database.
+6. Run this command to install husky hooks for git:
+
+```
+yarn run prepare
+```
+
+7. Start the PostgreSQL server on your local machine and create a dev and test database.
 
 ```
 createdb <YOUR_DATABASE_NAME>
@@ -71,9 +79,9 @@ createdb <YOUR_DATABASE_NAME>
 yarn run build
 ```
 
-## Running the development server
+## Running the Development Server
 
-1. In one terminal window, change directories to the apps/server folder and run this command:
+1. Change directories to the apps/server folder and run this command:
 
 ```
 yarn run build:watch
@@ -85,22 +93,23 @@ yarn run build:watch
   yarn run dev
 ```
 
+## Making commits
+
+This project uses husky, commitlint, and commitizen for a local CI process. To make a commit, run this command:
+
+```
+yarn run commit
+```
+
+and follow the instructions. When you are done, husky will automatically run a lint and prettier check, as well as checking for a conventional commmit message before committing. When you push your commits, it will run style checks, tests, type checks and build tests before finalizing the push.
+
+All of this behavior can be changed by editing the files within the .husky folder, as well as the .lintstagedrc.json and comitlint.config.js files.
+
+Commands to run tests, type checks, builds, and style checks can be found in the root package.json, as well as the package.json files within the apps and packages folders.
+
 ## TODO:
 
-- [x] Add logging capabilities (winston, no need to print logs into files or a db for now as this is just a boilerplate)
 - [ ] CI
-  - [x] Add a test script to run all tests
-  - [x] create build pipeline to build apps and their package dependencies
-  - [x] add verbose pre-push hook (messages to console, check lint, check format, check types, run tests, check build)
-  - [x] add messages to console on pre-commit
-  - [x] commitlint
   - [ ] check branch name on pre-push
   - [ ] MAYBE?: circleci
   - [ ] github actions
-- [ ] Update docs
-  - [ ] @monorepo/server docs
-  - [ ] @monorepo/config docs
-  - [ ] @monorepo/tsconfig docs
-  - [ ] @monorepo/yup-schemas docs
-  - [ ] @monorepo/errors docs
-  - [ ] update root README.md
