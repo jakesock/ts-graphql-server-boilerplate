@@ -106,10 +106,3 @@ and follow the instructions. When you are done, husky will automatically run a l
 All of this behavior can be changed by editing the files within the .husky folder, as well as the .lintstagedrc.json and comitlint.config.js files.
 
 Commands to run tests, type checks, builds, and style checks can be found in the root package.json, as well as the package.json files within the apps and packages folders.
-
-## TODO:
-
-- [ ] CI
-  - [ ] check branch name on pre-push
-  - [ ] MAYBE?: circleci
-  - [ ] github actions
